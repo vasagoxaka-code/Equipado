@@ -606,7 +606,6 @@
               </div>
             </div>
 
-            <!-- VISOR RÁPIDO DE CITA AL TOCARLA -->
             <div id="tapVerseBox" class="tap-verse-popup hidden">
               <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
                 <strong id="tapVerseRefTitle" style="color:var(--primary);">Cita</strong>
@@ -663,7 +662,6 @@
           </div>
         </div>
 
-        <!-- BORDE / PANEL BIBLICO LATERAL -->
         <aside id="bibleEdgePanel" class="bible-edge-panel" aria-label="Biblia en los bordes">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
             <div>
@@ -1024,10 +1022,15 @@
         }
       });
       if (!starts.length) return [];
-      return starts.map((st, i) => ({
-        ...st,
-        endIdx: i + 1 < starts.length ? starts[i + 1].startIdx : items.length
-      }));
+      return starts
+        .map((st, i) => ({
+          ...st,
+          endIdx: i + 1 < starts.length ? starts[i + 1].startIdx : items.length
+        }))
+        .filter((sec) => {
+          const slice = items.slice(sec.startIdx + 1, sec.endIdx);
+          return slice.some((b) => b && (b.type === "image" || String(b.text || "").trim().length > 0));
+        });
     }
 
     function openSingleArticle(startIdx) {
@@ -1473,215 +1476,228 @@
     }
 
     function renderStudy() {
-      applyBibleLayout();
-      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
-      const sections = getArticleSections(doc);
-      const indexSection = document.getElementById("articleIndexSection");
-      const singleBar = document.getElementById("singleArticleBar");
       const reader = document.getElementById("readerContent");
+      try {
+        applyBibleLayout();
+        const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+        const sections = getArticleSections(doc);
+        const indexSection = document.getElementById("articleIndexSection");
+        const singleBar = document.getElementById("singleArticleBar");
 
-      document.getElementById("studyDocTitle").textContent = doc.title;
-      document.getElementById("studyDocMeta").textContent =
-        doc.type === "pdf"
-          ? "PDF · Toca una página para ampliarla"
-          : sections.length > 1 && readerViewMode === "index"
-            ? "Elige un artículo para entrar directo"
-            : "Toca una cita bíblica para abrirla al instante, o selecciona/toca un párrafo para subrayar o anotar";
+        document.getElementById("studyDocTitle").textContent = doc.title || "Documento";
+        document.getElementById("studyDocMeta").textContent =
+          doc.type === "pdf"
+            ? "PDF · Toca una página para ampliarla"
+            : sections.length > 1 && readerViewMode === "index"
+              ? "Elige un artículo para entrar directo"
+              : "Toca una cita bíblica para verla al instante, o selecciona/toca un párrafo para subrayar o anotar";
 
-      renderDetectedRefs(doc);
+        renderDetectedRefs(doc);
 
-      if (doc.type !== "pdf" && sections.length > 1 && readerViewMode === "index") {
-        indexSection.classList.remove("hidden");
-        singleBar.classList.add("hidden");
+        if (doc.type !== "pdf" && sections.length > 1 && readerViewMode === "index") {
+          indexSection.classList.remove("hidden");
+          singleBar.classList.add("hidden");
+          reader.innerHTML = "";
+
+          const listEl = document.getElementById("articleIndexList");
+          listEl.innerHTML = "";
+          sections.forEach((sec, idx) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "article-index-row";
+            btn.onclick = () => openSingleArticle(sec.startIdx);
+
+            const thumbHtml = sec.thumb
+              ? `<img class="article-thumb" src="${sec.thumb}" alt="" />`
+              : `<div class="article-thumb-placeholder">ART. ${idx + 1}</div>`;
+
+            btn.innerHTML = `
+              ${thumbHtml}
+              <div>
+                ${sec.week ? `<div class="muted" style="font-size:0.74rem; font-weight:700; text-transform:uppercase;">${escapeHtml(sec.week)}</div>` : ""}
+                <strong style="font-size:0.96rem;">${escapeHtml(sec.title)}</strong>
+              </div>
+            `;
+            listEl.appendChild(btn);
+          });
+          return;
+        }
+
+        indexSection.classList.add("hidden");
+        if (doc.type !== "pdf" && sections.length > 1 && readerViewMode === "single") {
+          singleBar.classList.remove("hidden");
+        } else {
+          singleBar.classList.add("hidden");
+        }
+
+        const notesByBlock = {};
+        state.notes.forEach((n) => {
+          if (n.docId === doc.id && typeof n.paraIndex === "number") {
+            notesByBlock[n.paraIndex] = notesByBlock[n.paraIndex] || [];
+            notesByBlock[n.paraIndex].push(n.body);
+          }
+        });
+
         reader.innerHTML = "";
 
-        const listEl = document.getElementById("articleIndexList");
-        listEl.innerHTML = "";
-        sections.forEach((sec, idx) => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "article-index-row";
-          btn.onclick = () => openSingleArticle(sec.startIdx);
-
-          const thumbHtml = sec.thumb
-            ? `<img class="article-thumb" src="${sec.thumb}" alt="" />`
-            : `<div class="article-thumb-placeholder">ART. ${idx + 1}</div>`;
-
-          btn.innerHTML = `
-            ${thumbHtml}
-            <div>
-              ${sec.week ? `<div class="muted" style="font-size:0.74rem; font-weight:700; text-transform:uppercase;">${escapeHtml(sec.week)}</div>` : ""}
-              <strong style="font-size:0.96rem;">${escapeHtml(sec.title)}</strong>
-            </div>
-          `;
-          listEl.appendChild(btn);
-        });
-        return;
-      }
-
-      indexSection.classList.add("hidden");
-      if (doc.type !== "pdf" && sections.length > 1 && readerViewMode === "single") {
-        singleBar.classList.remove("hidden");
-      } else {
-        singleBar.classList.add("hidden");
-      }
-
-      const notesByBlock = {};
-      state.notes.forEach((n) => {
-        if (n.docId === doc.id && typeof n.paraIndex === "number") {
-          notesByBlock[n.paraIndex] = notesByBlock[n.paraIndex] || [];
-          notesByBlock[n.paraIndex].push(n.body);
+        if (doc.type === "pdf" && Array.isArray(doc.pages)) {
+          doc.pages.forEach((pg, idx) => {
+            const card = document.createElement("div");
+            card.className = "pdf-page-card";
+            card.dataset.blockIndex = idx;
+            card.innerHTML = `<strong>Página ${pg.pageNum || idx + 1}</strong>`;
+            if (pg.imageDataUrl) {
+              const img = document.createElement("img");
+              img.src = pg.imageDataUrl;
+              img.alt = `Página ${pg.pageNum || idx + 1}`;
+              img.className = "pdf-page-img";
+              img.onclick = () => openLightbox(pg.imageDataUrl);
+              card.appendChild(img);
+            }
+            reader.appendChild(card);
+          });
+          return;
         }
-      });
 
-      reader.innerHTML = "";
-
-      if (doc.type === "pdf" && Array.isArray(doc.pages)) {
-        doc.pages.forEach((pg, idx) => {
-          const card = document.createElement("div");
-          card.className = "pdf-page-card";
-          card.dataset.blockIndex = idx;
-          card.innerHTML = `<strong>Página ${pg.pageNum || idx + 1}</strong>`;
-          if (pg.imageDataUrl) {
-            const img = document.createElement("img");
-            img.src = pg.imageDataUrl;
-            img.alt = `Página ${pg.pageNum || idx + 1}`;
-            img.className = "pdf-page-img";
-            img.onclick = () => openLightbox(pg.imageDataUrl);
-            card.appendChild(img);
+        const allBlocks = Array.isArray(doc.paragraphs) ? doc.paragraphs : [];
+        let rangeStart = 0;
+        let rangeEnd = allBlocks.length;
+        if (readerViewMode === "single" && typeof selectedArticleStartIdx === "number") {
+          const matchSec = sections.find((s) => s.startIdx === selectedArticleStartIdx);
+          if (matchSec) {
+            rangeStart = matchSec.startIdx;
+            rangeEnd = matchSec.endIdx;
           }
-          reader.appendChild(card);
+        }
+
+        allBlocks.forEach((rawItem, idx) => {
+          if (idx < rangeStart || idx >= rangeEnd) return;
+          const item = typeof rawItem === "string" ? { type: "paragraph", text: rawItem } : (rawItem || {});
+
+          if (item.type === "articleStart") {
+            if (readerViewMode === "single") return;
+            const div = document.createElement("div");
+            div.className = "week-banner";
+            div.dataset.blockIndex = idx;
+            div.textContent = item.week ? `${item.week} · ${item.title}` : (item.title || "Sección");
+            reader.appendChild(div);
+            return;
+          }
+
+          if (item.type === "week") {
+            const w = document.createElement("div");
+            w.className = "week-banner";
+            w.dataset.blockIndex = idx;
+            w.textContent = item.text || "";
+            reader.appendChild(w);
+            return;
+          }
+
+          if (item.type === "image") {
+            const box = document.createElement("div");
+            box.className = "reader-img-box";
+            box.dataset.blockIndex = idx;
+            box.innerHTML = `<img src="${item.src}" alt="${escapeHtml(item.alt || "Imagen")}" onclick="openLightbox('${item.src}')" />`;
+            reader.appendChild(box);
+            return;
+          }
+
+          const pText = String(item.text || "");
+          if (!pText.trim()) return;
+          const entry = doc.highlights?.[idx];
+          const blockNotes = notesByBlock[idx] || [];
+
+          if (item.type === "song") {
+            const lines = pText.split("\n");
+            const firstLine = lines[0] || "CANCIÓN";
+            const restLines = lines.slice(1).join("\n");
+
+            const songBox = document.createElement("div");
+            songBox.className = `song-clean clean-block ${entry?.full ? entry.full : ""}`.trim();
+            songBox.dataset.blockIndex = idx;
+            songBox.onclick = (ev) => selectBlockForActions(idx, ev);
+            songBox.innerHTML = `
+              <div class="song-clean-title">${escapeHtml(firstLine)}</div>
+              <div class="song-clean-lyrics para-text" data-para-index="${idx}">${buildHighlightedTextHtml(restLines || firstLine, entry)}</div>
+            `;
+            reader.appendChild(songBox);
+            return;
+          }
+
+          if (item.type === "articleTitle") {
+            const t = document.createElement("div");
+            t.className = "article-main-title para-text clean-block";
+            t.dataset.blockIndex = idx;
+            t.dataset.paraIndex = idx;
+            t.onclick = (ev) => selectBlockForActions(idx, ev);
+            t.innerHTML = buildHighlightedTextHtml(pText, entry);
+            reader.appendChild(t);
+            return;
+          }
+
+          if (item.type === "leadQuote") {
+            const q = document.createElement("div");
+            q.className = "lead-quote para-text clean-block";
+            q.dataset.blockIndex = idx;
+            q.dataset.paraIndex = idx;
+            q.onclick = (ev) => selectBlockForActions(idx, ev);
+            q.innerHTML = buildHighlightedTextHtml(pText, entry);
+            reader.appendChild(q);
+            return;
+          }
+
+          if (item.type === "themeBox") {
+            const tb = document.createElement("div");
+            tb.className = "theme-box clean-block";
+            tb.dataset.blockIndex = idx;
+            tb.onclick = (ev) => selectBlockForActions(idx, ev);
+            tb.innerHTML = `
+              <div class="theme-label">TEMA</div>
+              <div class="para-text" data-para-index="${idx}" style="margin-top:4px;">${buildHighlightedTextHtml(pText, entry)}</div>
+            `;
+            reader.appendChild(tb);
+            return;
+          }
+
+          const isQuestion = item.type === "question" || /^\d{1,2}\.\s+/.test(pText);
+
+          const wrapper = document.createElement("div");
+          wrapper.className = `clean-block ${entry?.full ? entry.full : ""} ${blockNotes.length ? "has-note" : ""}`.trim();
+          wrapper.dataset.blockIndex = idx;
+          wrapper.onclick = (ev) => selectBlockForActions(idx, ev);
+
+          const textDiv = document.createElement("p");
+          textDiv.className = `para-text ${isQuestion ? "question-heading" : ""}`;
+          textDiv.dataset.paraIndex = idx;
+          textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);
+          wrapper.appendChild(textDiv);
+
+          if (blockNotes.length) {
+            const noteChip = document.createElement("div");
+            noteChip.className = "inline-note-chip";
+            noteChip.textContent = blockNotes.join(" · ");
+            wrapper.appendChild(noteChip);
+          }
+
+          reader.appendChild(wrapper);
         });
-        return;
-      }
 
-      let rangeStart = 0;
-      let rangeEnd = (doc.paragraphs || []).length;
-      if (readerViewMode === "single" && typeof selectedArticleStartIdx === "number") {
-        const matchSec = sections.find((s) => s.startIdx === selectedArticleStartIdx);
-        if (matchSec) {
-          rangeStart = matchSec.startIdx;
-          rangeEnd = matchSec.endIdx;
-        }
-      }
-
-      (doc.paragraphs || []).forEach((rawItem, idx) => {
-        if (idx < rangeStart || idx >= rangeEnd) return;
-        const item = typeof rawItem === "string" ? { type: "paragraph", text: rawItem } : (rawItem || {});
-
-        if (item.type === "articleStart") {
-          if (readerViewMode === "single") return;
-          const div = document.createElement("div");
-          div.className = "week-banner";
-          div.dataset.blockIndex = idx;
-          div.textContent = item.week ? `${item.week} · ${item.title}` : (item.title || "Sección");
-          reader.appendChild(div);
+        if (!reader.innerHTML.trim() && readerViewMode !== "all" && allBlocks.length) {
+          readerViewMode = "all";
+          renderStudy();
           return;
         }
 
-        if (item.type === "week") {
-          const w = document.createElement("div");
-          w.className = "week-banner";
-          w.dataset.blockIndex = idx;
-          w.textContent = item.text || "";
-          reader.appendChild(w);
-          return;
-        }
-
-        if (item.type === "image") {
-          const box = document.createElement("div");
-          box.className = "reader-img-box";
-          box.dataset.blockIndex = idx;
-          box.innerHTML = `<img src="${item.src}" alt="${escapeHtml(item.alt || "Imagen")}" onclick="openLightbox('${item.src}')" />`;
-          reader.appendChild(box);
-          return;
-        }
-
-        const pText = String(item.text || "");
-        const entry = doc.highlights?.[idx];
-        const blockNotes = notesByBlock[idx] || [];
-
-        if (item.type === "song") {
-          const lines = pText.split("\n");
-          const firstLine = lines[0] || "CANCIÓN";
-          const restLines = lines.slice(1).join("\n");
-
-          const songBox = document.createElement("div");
-          songBox.className = `song-clean clean-block ${entry?.full ? entry.full : ""}`.trim();
-          songBox.dataset.blockIndex = idx;
-          songBox.onclick = (ev) => selectBlockForActions(idx, ev);
-          songBox.innerHTML = `
-            <div class="song-clean-title">${escapeHtml(firstLine)}</div>
-            <div class="song-clean-lyrics para-text" data-para-index="${idx}">${buildHighlightedTextHtml(restLines || firstLine, entry)}</div>
-          `;
-          reader.appendChild(songBox);
-          return;
-        }
-
-        if (item.type === "articleTitle") {
-          const t = document.createElement("div");
-          t.className = "article-main-title para-text clean-block";
-          t.dataset.blockIndex = idx;
-          t.dataset.paraIndex = idx;
-          t.onclick = (ev) => selectBlockForActions(idx, ev);
-          t.innerHTML = buildHighlightedTextHtml(pText, entry);
-          reader.appendChild(t);
-          return;
-        }
-
-        if (item.type === "leadQuote") {
-          const q = document.createElement("div");
-          q.className = "lead-quote para-text clean-block";
-          q.dataset.blockIndex = idx;
-          q.dataset.paraIndex = idx;
-          q.onclick = (ev) => selectBlockForActions(idx, ev);
-          q.innerHTML = buildHighlightedTextHtml(pText, entry);
-          reader.appendChild(q);
-          return;
-        }
-
-        if (item.type === "themeBox") {
-          const tb = document.createElement("div");
-          tb.className = "theme-box clean-block";
-          tb.dataset.blockIndex = idx;
-          tb.onclick = (ev) => selectBlockForActions(idx, ev);
-          tb.innerHTML = `
-            <div class="theme-label">TEMA</div>
-            <div class="para-text" data-para-index="${idx}" style="margin-top:4px;">${buildHighlightedTextHtml(pText, entry)}</div>
-          `;
-          reader.appendChild(tb);
-          return;
-        }
-
-        const isQuestion = item.type === "question" || /^\d{1,2}\.\s+/.test(pText);
-
-        const wrapper = document.createElement("div");
-        wrapper.className = `clean-block ${entry?.full ? entry.full : ""} ${blockNotes.length ? "has-note" : ""}`.trim();
-        wrapper.dataset.blockIndex = idx;
-        wrapper.onclick = (ev) => selectBlockForActions(idx, ev);
-
-        const textDiv = document.createElement("p");
-        textDiv.className = `para-text ${isQuestion ? "question-heading" : ""}`;
-        textDiv.dataset.paraIndex = idx;
-        textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);
-        wrapper.appendChild(textDiv);
-
-        if (blockNotes.length) {
-          const noteChip = document.createElement("div");
-          noteChip.className = "inline-note-chip";
-          noteChip.textContent = blockNotes.join(" · ");
-          wrapper.appendChild(noteChip);
-        }
-
-        reader.appendChild(wrapper);
-      });
-
-      reader.querySelectorAll(".bible-ref-link").forEach((el) => {
-        el.addEventListener("click", (ev) => {
-          ev.stopPropagation();
-          openTappedVerseQuickView(el.dataset.bibleRef || el.textContent);
+        reader.querySelectorAll(".bible-ref-link").forEach((el) => {
+          el.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            openTappedVerseQuickView(el.dataset.bibleRef || el.textContent);
+          });
         });
-      });
+      } catch (err) {
+        console.error("Error al renderizar estudio:", err);
+        reader.innerHTML = `<div class="info-box">No se pudo mostrar el formato del artículo. Usa "Ver todo seguido" o revisa el texto importado.</div>`;
+      }
     }
 
     function classifyBlock(text, tagName) {
@@ -1918,7 +1934,7 @@
               const path = htmlFiles[fileIdx];
               const rawHtml = await zip.files[path].async("string");
               const docXml = new DOMParser().parseFromString(rawHtml, "text/html");
-              const h1El = docXml.querySelector("h1, h2");
+              const h1El = docXml.querySelector("h1, h2, h3");
               const sectionTitle = h1El ? h1El.textContent.replace(/\s+/g, " ").trim() : `Sección ${fileIdx + 1}`;
               const firstImgEl = docXml.querySelector("img");
               let thumbData = "";
@@ -1931,7 +1947,7 @@
               const startBlockIdx = blocks.length;
               blocks.push({ type: "articleStart", index: fileIdx, week: "", title: sectionTitle, thumb: thumbData });
 
-              const nodes = Array.from(docXml.querySelectorAll("p, h1, h2, h3, h4, li, img"));
+              const nodes = Array.from(docXml.querySelectorAll("p, h1, h2, h3, h4, li, blockquote, img"));
               for (const node of nodes) {
                 const tag = node.tagName.toLowerCase();
                 if (tag === "img") {
@@ -1958,6 +1974,13 @@
                     blocks[startBlockIdx].week = txt;
                   }
                   blocks.push({ type: kind, text: txt });
+                }
+              }
+
+              if (blocks.length === startBlockIdx + 1) {
+                const fallbackBody = (docXml.body?.textContent || "").replace(/\s+/g, " ").trim();
+                if (fallbackBody) {
+                  blocks.push({ type: "paragraph", text: fallbackBody });
                 }
               }
             }
