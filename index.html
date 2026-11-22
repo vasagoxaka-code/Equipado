@@ -1712,4 +1712,44 @@
           }
         } catch (err) {
           console.error("Error importando archivo:", err);
-          state
+          state.docs.unshift({
+            id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+            title: cleanTitle,
+            category: "Error",
+            type: "text",
+            paragraphs: [{ type: "paragraph", text: "No se pudo procesar este archivo." }],
+            highlights: {}
+          });
+        }
+      }
+
+      saveState();
+      renderLibrary();
+      event.target.value = "";
+    });
+
+    document.getElementById("jwLangSelect").addEventListener("change", updateJwLink);
+    document.addEventListener("selectionchange", handleSelectionChange);
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
+    setHighlightColor(state.highlightColor);
+    updateJwLink();
+    renderLibrary();
+    renderStudy();
+    renderNotes();
+  </script>
+</body>
+</html>
