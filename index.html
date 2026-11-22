@@ -326,6 +326,29 @@
       padding-left: 11px;
     }
 
+    .bible-ref-link {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      cursor: pointer;
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+
+    .bible-ref-link:hover {
+      background: #e6eff8;
+    }
+
+    .tap-verse-popup {
+      background: #f4f8fc;
+      border: 1px solid #b8cde3;
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+
     .inline-note-chip {
       display: inline-block;
       margin-top: 6px;
@@ -526,7 +549,7 @@
       <div class="card hero-card">
         <span class="badge-pill">Memoria Interna (IndexedDB)</span>
         <h2>Tu espacio de estudio listo en cualquier lugar</h2>
-        <p>Importa tus archivos EPUB o PDF, carga tu Biblia local en memoria interna, salta al artículo y ten las citas en los bordes.</p>
+        <p>Importa tus archivos EPUB o PDF, carga tus pasajes bíblicos a la memoria interna y toca cualquier cita del texto para verla o guardarla.</p>
 
         <div class="btn-row">
           <label class="btn btn-light" for="fileInput">
@@ -553,7 +576,7 @@
       </div>
 
       <div class="info-box card" id="bibleMemoryInfo">
-        <strong>Biblia en memoria interna:</strong> <span id="bibleCountLabel">0 pasajes cargados</span>. Puedes importar un JSON de Biblia (formato <code>{"Romanos 10:13": {"es":"...","de":"...","en":"..."}}</code>) o buscar/guardar pasajes desde el borde de estudio.
+        <strong>Biblia en memoria interna:</strong> <span id="bibleCountLabel">0 pasajes guardados</span>. Toca cualquier cita subrayada con puntos en un párrafo para abrir su visor rápido o guardarla en IndexedDB.
       </div>
 
       <div class="card">
@@ -571,7 +594,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
               <div>
                 <h2 id="studyDocTitle">Selecciona un texto para estudiar</h2>
-                <p class="muted" id="studyDocMeta">Selecciona texto o toca un párrafo para subrayar o anotar.</p>
+                <p class="muted" id="studyDocMeta">Toca una cita bíblica para verla al instante, o selecciona/toca un párrafo para subrayar o anotar.</p>
               </div>
               <div class="btn-row" style="margin-top:0;">
                 <button type="button" class="color-dot active" data-color="hl-yellow" style="background:var(--hl-yellow);" onclick="setHighlightColor('hl-yellow')" title="Amarillo"></button>
@@ -581,6 +604,24 @@
                 <button type="button" class="btn btn-sm" onclick="toggleBiblePanel()">Biblia borde</button>
                 <button type="button" class="btn btn-sm" onclick="clearCurrentDocHighlights()">Limpiar marcas</button>
               </div>
+            </div>
+
+            <!-- VISOR RÁPIDO DE CITA AL TOCARLA -->
+            <div id="tapVerseBox" class="tap-verse-popup hidden">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+                <strong id="tapVerseRefTitle" style="color:var(--primary);">Cita</strong>
+                <div class="btn-row" style="margin-top:0;">
+                  <select id="tapVerseLang" onchange="syncTapVerseBox()" style="width:auto; padding:5px 8px; font-size:0.8rem;">
+                    <option value="es">ES</option>
+                    <option value="de">DE</option>
+                    <option value="en">EN</option>
+                  </select>
+                  <button type="button" class="btn btn-sm" onclick="jumpToBibleEdge()">Ver borde</button>
+                  <button type="button" class="btn btn-sm" onclick="closeTapVerseBox()">✕</button>
+                </div>
+              </div>
+              <textarea id="tapVerseText" placeholder="Texto de esta cita (escribe o pega aquí y se guarda en memoria interna)..." style="min-height:68px; margin-top:8px;" oninput="saveTapVerseText()"></textarea>
+              <div id="tapVerseStatus" class="muted" style="margin-top:4px;"></div>
             </div>
 
             <div id="articleIndexSection" class="hidden" style="margin-top:12px;">
@@ -623,31 +664,31 @@
         </div>
 
         <!-- BORDE / PANEL BIBLICO LATERAL -->
-        <aside class="bible-edge-panel" aria-label="Biblia en los bordes">
+        <aside id="bibleEdgePanel" class="bible-edge-panel" aria-label="Biblia en los bordes">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
             <div>
               <h3 style="margin:0;">Biblia en los bordes</h3>
-              <div class="muted">Memoria interna + búsqueda ES / DE / EN</div>
+              <div class="muted">Memoria interna (IndexedDB) + ES / DE / EN</div>
             </div>
             <button type="button" class="btn btn-sm" onclick="toggleBiblePanel()">✕</button>
           </div>
 
           <div style="margin-top:10px;">
-            <div class="muted" style="margin-bottom:4px;">Citas detectadas (toca para abrir):</div>
+            <div class="muted" style="margin-bottom:4px;">Citas del artículo (toca para abrir):</div>
             <div id="detectedRefsBox"></div>
           </div>
 
           <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;" />
 
           <div style="display:flex; gap:6px; align-items:center;">
-            <input type="text" id="bibleRefInput" placeholder="Ej. Romanos 10:13, 14" oninput="renderBibleComparison()" />
-            <button type="button" class="btn btn-sm btn-primary" onclick="fetchBiblePassageOnline()">Buscar</button>
+            <input type="text" id="bibleRefInput" placeholder="Ej. Gén. 11:6-9 o Apoc. 7:9, 10, 14" oninput="renderBibleComparison()" />
+            <button type="button" class="btn btn-sm" onclick="fetchBiblePassageOnline()">Buscar web</button>
           </div>
           <div id="bibleFetchStatus" class="muted" style="margin-top:5px;"></div>
 
           <div class="lang-compare-card">
             <strong style="font-size:0.82rem; color:var(--primary);">Español (ES)</strong>
-            <textarea id="bibleTextEs" placeholder="Texto bíblico en español..." style="min-height:66px; margin-top:6px;" oninput="saveBiblePassage()"></textarea>
+            <textarea id="bibleTextEs" placeholder="Texto bíblico en español (se guarda al escribir o pegar)..." style="min-height:66px; margin-top:6px;" oninput="saveBiblePassage()"></textarea>
           </div>
 
           <div class="lang-compare-card">
@@ -687,7 +728,7 @@
     <section id="tab-backup" class="hidden">
       <div class="card">
         <h2>Copia de seguridad</h2>
-        <p class="muted">Exporta tus textos, pasajes bíblicos y notas en un archivo JSON.</p>
+        <p class="muted">Exporta tus textos, pasajes bíblicos guardados y notas en un archivo JSON.</p>
         <div class="btn-row">
           <button type="button" class="btn btn-primary" onclick="exportBackup()">Exportar copia (.json)</button>
           <label class="btn" for="importBackupInput">Importar copia (.json)</label>
@@ -738,6 +779,8 @@
     const STORE_STATE = "appState";
     const STORE_BIBLE = "bibleVerses";
 
+    const REF_REGEX_SOURCE = "\\b(?:1|2|3)?\\s?(?:Gén\\.?|Éx\\.?|Lev\\.?|Núm\\.?|Deut\\.?|Jos\\.?|Juec\\.?|Rut|Sam\\.?|Rey\\.?|Reyes|Crón\\.?|Esd\\.?|Neh\\.?|Est\\.?|Job|Sal\\.?|Prov\\.?|Ecl\\.?|Cant\\.?|Is\\.?|Jer\\.?|Lam\\.?|Ezeq\\.?|Dan\\.?|Os\\.?|Joel|Amós|Abd\\.?|Jon\\.?|Miq\\.?|Nah\\.?|Hab\\.?|Sof\\.?|Hag\\.?|Zac\\.?|Mal\\.?|Mat\\.?|Mar\\.?|Luc\\.?|Juan|Hech\\.?|Rom\\.?|Romanos|Cor\\.?|Gál\\.?|Ef\\.?|Filip\\.?|Col\\.?|Tes\\.?|Tim\\.?|Tito|Filem\\.?|Heb\\.?|Sant\\.?|Ped\\.?|Jud\\.?|Apoc\\.?)\\s*\\d+:\\d+(?:[-–,]\\s*\\d+)*";
+
     const defaultState = {
       activeDocId: "doc-welcome",
       highlightColor: "hl-yellow",
@@ -756,7 +799,7 @@
             { type: "leadQuote", text: "“En esos días, 10 hombres de todos los idiomas de las naciones se agarrarán [...] de la túnica de un judío” (Zac. 8:23)." },
             { type: "themeBox", text: "Cómo está participando el pueblo de Jehová en el cumplimiento de Zacarías 8:23." },
             { type: "question", text: "1. ¿Por qué es vital predicar las buenas noticias en muchos idiomas? (Romanos 10:13, 14)." },
-            { type: "paragraph", text: "Jehová detuvo a los rebeldes que querían construir la Torre de Babel haciendo que hablaran idiomas diferentes. Toca este párrafo o selecciona una frase para subrayar o anotar." }
+            { type: "paragraph", text: "JEHOVÁ detuvo a los rebeldes que querían construir la Torre de Babel haciendo que hablaran idiomas diferentes (Gén. 11:6-9). Sin embargo, el propósito de Dios es reunir “una gran muchedumbre [...] de todas las naciones, tribus, pueblos y lenguas” para que sobreviva a la gran tribulación y entre en el nuevo mundo (Apoc. 7:9, 10, 14). Toca cualquiera de estas citas para abrirla al instante." }
           ],
           highlights: {}
         }
@@ -764,30 +807,13 @@
       notes: []
     };
 
-    const seedBible = {
-      "Romanos 10:13, 14": {
-        es: "13 Porque «todo el que invoque el nombre de Jehová será salvo». 14 Sin embargo, ¿cómo lo invocarán si no han puesto su fe en él?",
-        de: "13 Denn „jeder, der den Namen Jehovas anruft, wird gerettet werden“. 14 Doch wie werden sie den anrufen, an den sie nicht geglaubt haben?",
-        en: "13 For “everyone who calls on the name of Jehovah will be saved.” 14 However, how will they call on him in whom they have not put faith?"
-      },
-      "Zac. 8:23": {
-        es: "En esos días, diez hombres de todos los idiomas de las naciones se agarrarán [...] de la túnica de un judío.",
-        de: "In jenen Tagen werden zehn Männer aus allen Sprachen der Nationen [...] den Zipfel des Gewandes eines Juden ergreifen.",
-        en: "In those days ten men out of all the languages of the nations will take hold [...] of the robe of a Jew."
-      },
-      "1 Rey. 3:9": {
-        es: "Concédele a tu siervo un corazón obediente para juzgar a tu pueblo y discernir entre lo bueno y lo malo.",
-        de: "Gib deinem Knecht ein gehorsames Herz, um dein Volk zu richten und zwischen Gut und Böse zu unterscheiden.",
-        en: "Give your servant an obedient heart to judge your people and to discern between good and bad."
-      }
-    };
-
     let state = structuredClone(defaultState);
-    let bibleCache = { ...seedBible };
+    let bibleCache = {};
     let dbInstance = null;
     let pendingTextRange = null;
     let selectedBlockIndex = null;
     let activeNoteContext = null;
+    let activeTappedRef = "";
     let readerViewMode = "index";
     let selectedArticleStartIdx = null;
 
@@ -797,12 +823,8 @@
         const req = indexedDB.open(DB_NAME, DB_VERSION);
         req.onupgradeneeded = () => {
           const db = req.result;
-          if (!db.objectStoreNames.contains(STORE_STATE)) {
-            db.createObjectStore(STORE_STATE);
-          }
-          if (!db.objectStoreNames.contains(STORE_BIBLE)) {
-            db.createObjectStore(STORE_BIBLE);
-          }
+          if (!db.objectStoreNames.contains(STORE_STATE)) db.createObjectStore(STORE_STATE);
+          if (!db.objectStoreNames.contains(STORE_BIBLE)) db.createObjectStore(STORE_BIBLE);
         };
         req.onsuccess = () => {
           dbInstance = req.result;
@@ -850,8 +872,6 @@
             });
             if (val) bibleCache[k] = val;
           }
-        } else {
-          await saveBibleMapToDB(seedBible);
         }
 
         document.getElementById("storageBadge").textContent = "IndexedDB listo";
@@ -942,6 +962,59 @@
       layout.classList.toggle("bible-hidden", !state.showBiblePanel);
     }
 
+    function openTappedVerseQuickView(refText) {
+      const cleanRef = String(refText || "").replace(/\s+/g, " ").trim();
+      if (!cleanRef) return;
+      activeTappedRef = cleanRef;
+      document.getElementById("bibleRefInput").value = cleanRef;
+      renderBibleComparison();
+
+      const box = document.getElementById("tapVerseBox");
+      document.getElementById("tapVerseRefTitle").textContent = cleanRef;
+      box.classList.remove("hidden");
+      syncTapVerseBox();
+      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function syncTapVerseBox() {
+      if (!activeTappedRef) return;
+      const lang = document.getElementById("tapVerseLang").value || "es";
+      const entry = bibleCache[activeTappedRef] || { es: "", de: "", en: "" };
+      const textArea = document.getElementById("tapVerseText");
+      const status = document.getElementById("tapVerseStatus");
+      textArea.value = entry[lang] || "";
+      status.textContent = entry[lang]
+        ? `Mostrando texto guardado (${lang.toUpperCase()}) en memoria interna.`
+        : `Aún no hay texto en ${lang.toUpperCase()} para ${activeTappedRef}. Escríbelo o pégalo aquí.`;
+    }
+
+    async function saveTapVerseText() {
+      if (!activeTappedRef) return;
+      const lang = document.getElementById("tapVerseLang").value || "es";
+      const current = bibleCache[activeTappedRef] || { es: "", de: "", en: "" };
+      const updated = { ...current, [lang]: document.getElementById("tapVerseText").value };
+      await saveBiblePassageToDB(activeTappedRef, updated);
+      if (document.getElementById("bibleRefInput").value.trim() === activeTappedRef) {
+        renderBibleComparison();
+      }
+      document.getElementById("tapVerseStatus").textContent = "Guardado en memoria interna.";
+    }
+
+    function closeTapVerseBox() {
+      activeTappedRef = "";
+      document.getElementById("tapVerseBox").classList.add("hidden");
+    }
+
+    function jumpToBibleEdge() {
+      if (!state.showBiblePanel) {
+        state.showBiblePanel = true;
+        saveState();
+        applyBibleLayout();
+      }
+      const panel = document.getElementById("bibleEdgePanel");
+      if (panel) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
     function getArticleSections(doc) {
       const items = Array.isArray(doc.paragraphs) ? doc.paragraphs : [];
       const starts = [];
@@ -982,7 +1055,7 @@
         else if (item && item.text) textParts.push(item.text);
       });
       const joined = textParts.join(" ");
-      const regex = /\b(?:1|2|3)?\s?(?:Gén\.?|Éx\.?|Lev\.?|Núm\.?|Deut\.?|Jos\.?|Juec\.?|Rut|Sam\.?|Rey\.?|Reyes|Crón\.?|Esd\.?|Neh\.?|Est\.?|Job|Sal\.?|Prov\.?|Ecl\.?|Cant\.?|Is\.?|Jer\.?|Lam\.?|Ezeq\.?|Dan\.?|Os\.?|Joel|Amós|Abd\.?|Jon\.?|Miq\.?|Nah\.?|Hab\.?|Sof\.?|Hag\.?|Zac\.?|Mal\.?|Mat\.?|Mar\.?|Luc\.?|Juan|Hech\.?|Rom\.?|Romanos|Cor\.?|Gál\.?|Ef\.?|Filip\.?|Col\.?|Tes\.?|Tim\.?|Tito|Filem\.?|Heb\.?|Sant\.?|Ped\.?|Jud\.?|Apoc\.?)\s*\d+:\d+(?:[-–,]\s*\d+)*/gi;
+      const regex = new RegExp(REF_REGEX_SOURCE, "gi");
       const matches = joined.match(regex) || [];
       const unique = [];
       matches.forEach((m) => {
@@ -1005,11 +1078,7 @@
         chip.type = "button";
         chip.className = "ref-chip";
         chip.textContent = ref;
-        chip.onclick = () => {
-          document.getElementById("bibleRefInput").value = ref;
-          renderBibleComparison();
-          if (!bibleCache[ref]) fetchBiblePassageOnline();
-        };
+        chip.onclick = () => openTappedVerseQuickView(ref);
         box.appendChild(chip);
       });
       if (!document.getElementById("bibleRefInput").value) {
@@ -1027,8 +1096,8 @@
       document.getElementById("bibleTextEn").value = entry.en || "";
       if (statusEl) {
         statusEl.textContent = (entry.es || entry.de || entry.en)
-          ? "Cargado desde memoria interna."
-          : "Sin texto local todavía. Pulsa Buscar o escribe/pega el pasaje.";
+          ? "Guardado en memoria interna."
+          : "Sin texto guardado aún para esta cita. Escribe o pega el pasaje abajo y se guardará.";
       }
     }
 
@@ -1040,6 +1109,7 @@
         de: document.getElementById("bibleTextDe").value,
         en: document.getElementById("bibleTextEn").value
       });
+      if (activeTappedRef === key) syncTapVerseBox();
     }
 
     async function fetchBiblePassageOnline() {
@@ -1047,7 +1117,7 @@
       const statusEl = document.getElementById("bibleFetchStatus");
       if (!rawRef) return;
 
-      statusEl.textContent = "Buscando pasaje...";
+      statusEl.textContent = "Consultando referencia...";
       const encoded = encodeURIComponent(rawRef);
 
       try {
@@ -1067,12 +1137,13 @@
           };
           await saveBiblePassageToDB(rawRef, updated);
           renderBibleComparison();
+          if (activeTappedRef === rawRef) syncTapVerseBox();
           statusEl.textContent = "Guardado en memoria interna.";
         } else {
-          statusEl.textContent = "No encontrado en línea. Puedes pegarlo aquí y queda en memoria interna.";
+          statusEl.textContent = "No encontrado automáticamente. Pégalo o escríbelo abajo y quedará guardado.";
         }
       } catch (e) {
-        statusEl.textContent = "Sin conexión. Puedes pegar o escribir el pasaje y queda en memoria interna.";
+        statusEl.textContent = "Sin conexión. Pégalo o escríbelo abajo y quedará guardado.";
       }
     }
 
@@ -1222,7 +1293,7 @@
     }
 
     function selectBlockForActions(blockIndex, ev) {
-      if (ev && ev.target && ev.target.closest("img, button, a")) return;
+      if (ev && ev.target && ev.target.closest("img, button, a, .bible-ref-link")) return;
       const sel = window.getSelection();
       if (sel && !sel.isCollapsed) return;
       selectedBlockIndex = blockIndex;
@@ -1361,11 +1432,21 @@
       renderNotes();
     }
 
+    function linkifyBibleReferencesHtml(escapedSegment) {
+      const refRegex = new RegExp(REF_REGEX_SOURCE, "gi");
+      return escapedSegment.replace(refRegex, (match) => {
+        const cleanRef = match.replace(/\s+/g, " ").trim();
+        const attrRef = cleanRef.replace(/"/g, "&quot;");
+        return `<span class="bible-ref-link" data-bible-ref="${attrRef}">${match}</span>`;
+      });
+    }
+
     function buildHighlightedTextHtml(text, entry) {
-      if (!entry) return escapeHtml(text);
+      if (!entry) return linkifyBibleReferencesHtml(escapeHtml(text));
       const spans = Array.isArray(entry.spans) ? entry.spans : [];
       if (!spans.length) {
-        return entry.full ? `<span class="${entry.full}">${escapeHtml(text)}</span>` : escapeHtml(text);
+        const inner = linkifyBibleReferencesHtml(escapeHtml(text));
+        return entry.full ? `<span class="${entry.full}">${inner}</span>` : inner;
       }
 
       let cursor = 0;
@@ -1374,19 +1455,19 @@
         const s = Math.max(cursor, Math.min(text.length, sp.start));
         const e = Math.max(s, Math.min(text.length, sp.end));
         if (s > cursor) {
-          const chunk = text.slice(cursor, s);
-          html += entry.full ? `<span class="${entry.full}">${escapeHtml(chunk)}</span>` : escapeHtml(chunk);
+          const chunk = linkifyBibleReferencesHtml(escapeHtml(text.slice(cursor, s)));
+          html += entry.full ? `<span class="${entry.full}">${chunk}</span>` : chunk;
         }
         if (e > s) {
-          const marked = text.slice(s, e);
-          html += `<span class="${sp.color}">${escapeHtml(marked)}</span>`;
+          const marked = linkifyBibleReferencesHtml(escapeHtml(text.slice(s, e)));
+          html += `<span class="${sp.color}">${marked}</span>`;
         }
         cursor = e;
       });
 
       if (cursor < text.length) {
-        const rest = text.slice(cursor);
-        html += entry.full ? `<span class="${entry.full}">${escapeHtml(rest)}</span>` : escapeHtml(rest);
+        const rest = linkifyBibleReferencesHtml(escapeHtml(text.slice(cursor)));
+        html += entry.full ? `<span class="${entry.full}">${rest}</span>` : rest;
       }
       return html;
     }
@@ -1405,7 +1486,7 @@
           ? "PDF · Toca una página para ampliarla"
           : sections.length > 1 && readerViewMode === "index"
             ? "Elige un artículo para entrar directo"
-            : "Selecciona texto o toca un párrafo para subrayar o anotar";
+            : "Toca una cita bíblica para abrirla al instante, o selecciona/toca un párrafo para subrayar o anotar";
 
       renderDetectedRefs(doc);
 
@@ -1593,6 +1674,13 @@
         }
 
         reader.appendChild(wrapper);
+      });
+
+      reader.querySelectorAll(".bible-ref-link").forEach((el) => {
+        el.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          openTappedVerseQuickView(el.dataset.bibleRef || el.textContent);
+        });
       });
     }
 
@@ -1789,6 +1877,7 @@
             }
             await saveBibleMapToDB(normalized);
             renderBibleComparison();
+            if (activeTappedRef) syncTapVerseBox();
             alert(`Se cargaron ${Object.keys(normalized).length} pasajes bíblicos en la memoria interna.`);
           }
         } catch (err) {
