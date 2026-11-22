@@ -40,7 +40,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--ink);
-      line-height: 1.58;
+      line-height: 1.65;
       padding-bottom: 88px;
     }
 
@@ -109,8 +109,8 @@
     }
 
     h2 {
-      margin: 0 0 8px;
-      font-size: 1.08rem;
+      margin: 0 0 6px;
+      font-size: 1.1rem;
     }
 
     h3 {
@@ -120,7 +120,7 @@
 
     p {
       margin: 6px 0;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
     }
 
     .muted {
@@ -226,23 +226,6 @@
       margin-right: 6px;
     }
 
-    .pro-toolbar {
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 10px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .pro-grid {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 8px;
-      align-items: center;
-    }
-
     .reader-paragraph {
       padding: 10px 12px;
       border-radius: 10px;
@@ -257,13 +240,8 @@
       background: #fffdf8;
     }
 
-    .reader-paragraph.search-hit {
-      outline: 2px solid var(--accent);
-      background: #fffaf0;
-    }
-
     .reader-img-box {
-      margin: 12px 0;
+      margin: 14px 0;
       text-align: center;
       background: #faf8f4;
       border: 1px solid var(--border);
@@ -284,7 +262,7 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 12px;
-      margin: 12px 0;
+      margin: 14px 0;
       background: #fcfbf8;
     }
 
@@ -303,10 +281,6 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-    }
-
-    .compact-actions .para-actions {
-      display: none;
     }
 
     .hl-yellow { background: var(--hl-yellow); border-radius: 3px; padding: 1px 2px; }
@@ -377,7 +351,7 @@
       position: fixed;
       inset: 0;
       z-index: 50;
-      background: rgba(12, 17, 24, 0.9);
+      background: rgba(12, 17, 24, 0.92);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -447,7 +421,7 @@
       <div class="card hero-card">
         <span class="badge-pill">Biblioteca Personal Sin Conexión</span>
         <h2>Tu espacio de estudio listo en cualquier lugar</h2>
-        <p>Importa tus archivos EPUB, PDF o texto con sus imágenes, subraya, busca y toma notas ordenadas.</p>
+        <p>Importa tus archivos EPUB o PDF, ve las imágenes y toma notas claras.</p>
 
         <div class="btn-row">
           <label class="btn btn-light" for="fileInput">
@@ -469,12 +443,12 @@
       </div>
 
       <div class="info-box card">
-        <strong>Herramientas rápidas:</strong> En <em>Estudio</em> puedes buscar palabras, saltar a un bloque o página, ver imágenes a pantalla completa, subrayar frases o párrafos y añadir notas al instante.
+        <strong>Consejo:</strong> Para subrayar frases y ver imágenes sueltas de forma limpia, el formato <strong>EPUB</strong> se lee mucho mejor que el PDF. En PDF verás cada página tal como está diseñada para consultar o anotar por página.
       </div>
 
       <div class="card">
         <h3>Publicaciones y textos guardados</h3>
-        <p class="muted">Toca <strong>Leer</strong> para abrir un documento o <strong>Borrar</strong> si quieres liberar espacio.</p>
+        <p class="muted">Toca <strong>Leer</strong> para abrir un documento o <strong>Borrar</strong> para quitarlo.</p>
         <div id="docList"></div>
       </div>
     </section>
@@ -485,31 +459,14 @@
         <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
           <div>
             <h2 id="studyDocTitle">Selecciona un texto para estudiar</h2>
-            <p class="muted" id="studyDocMeta">Selecciona texto para subrayar o toca "Anotar" en un bloque.</p>
+            <p class="muted" id="studyDocMeta">Selecciona texto para subrayar o toca "Anotar".</p>
           </div>
           <div class="btn-row" style="margin-top:0;">
             <button type="button" class="color-dot active" data-color="hl-yellow" style="background:var(--hl-yellow);" onclick="setHighlightColor('hl-yellow')" title="Amarillo"></button>
             <button type="button" class="color-dot" data-color="hl-green" style="background:var(--hl-green);" onclick="setHighlightColor('hl-green')" title="Verde"></button>
             <button type="button" class="color-dot" data-color="hl-blue" style="background:var(--hl-blue);" onclick="setHighlightColor('hl-blue')" title="Azul"></button>
             <button type="button" class="color-dot" data-color="hl-pink" style="background:var(--hl-pink);" onclick="setHighlightColor('hl-pink')" title="Rosa"></button>
-            <button type="button" class="btn btn-sm" onclick="toggleCompactControls()" title="Mostrar u ocultar botones de párrafo">Botones</button>
             <button type="button" class="btn btn-sm" onclick="clearCurrentDocHighlights()">Limpiar marcas</button>
-          </div>
-        </div>
-
-        <!-- BARRA PRO ESTILO PDF EXPERT -->
-        <div class="pro-toolbar">
-          <div class="pro-grid">
-            <input type="text" id="docSearchInput" placeholder="Buscar palabra o frase en este documento..." oninput="runDocSearch()" />
-            <button type="button" class="btn btn-sm" onclick="jumpSearchHit(-1)">▲</button>
-            <button type="button" class="btn btn-sm" onclick="jumpSearchHit(1)">▼</button>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-            <span id="searchStatus" class="muted">Sin búsqueda activa</span>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <label for="jumpSelect" class="muted">Ir a:</label>
-              <select id="jumpSelect" style="width:auto; padding:6px 8px; font-size:0.82rem;" onchange="jumpToItem(this.value)"></select>
-            </div>
           </div>
         </div>
 
@@ -570,13 +527,11 @@
     </section>
   </main>
 
-  <!-- VISOR DE IMAGEN A PANTALLA COMPLETA -->
   <div id="imageLightbox" class="lightbox hidden" onclick="closeLightbox()">
     <img id="lightboxImg" src="" alt="Imagen ampliada" onclick="event.stopPropagation()" />
     <button type="button" class="btn btn-light" onclick="closeLightbox()">Cerrar imagen</button>
   </div>
 
-  <!-- BARRA FLOTANTE AL SELECCIONAR TEXTO -->
   <div id="selectionBar" class="floating-toolbar hidden" role="region" aria-label="Herramientas de selección">
     <div style="display:flex; align-items:center; gap:8px;">
       <button type="button" class="color-dot" style="background:var(--hl-yellow);" onclick="applySelectionHighlight('hl-yellow')" title="Amarillo"></button>
@@ -607,12 +562,11 @@
   </nav>
 
   <script>
-    const STORAGE_KEY = "equipado_store_v3";
+    const STORAGE_KEY = "equipado_store_v4";
 
     const defaultState = {
       activeDocId: "doc-welcome",
       highlightColor: "hl-yellow",
-      compactControls: false,
       docs: [
         {
           id: "doc-welcome",
@@ -620,9 +574,9 @@
           category: "Nota base",
           type: "text",
           paragraphs: [
-            "Bienvenido a Equipado. Selecciona cualquier frase o palabra con el dedo y verás la barra rápida para subrayar o añadir una nota.",
-            "También puedes pulsar el botón 'Anotar' debajo de cada bloque para escribir tus ideas sin salir de la lectura.",
-            "Al importar archivos EPUB o PDF se conservan las imágenes para verlas o ampliarlas."
+            "Bienvenido a Equipado. Selecciona cualquier frase o palabra con el dedo para subrayar o añadir una nota.",
+            "También puedes pulsar el botón 'Anotar' debajo de cada párrafo para escribir tus ideas sin salir de la lectura.",
+            "Importa archivos EPUB para leer párrafos con sus imágenes limpias, o PDF para consultar las páginas."
           ],
           highlights: {}
         }
@@ -644,36 +598,16 @@
     let state = loadState();
     let pendingSelection = null;
     let activeNoteContext = null;
-    let searchHits = [];
-    let currentHitIndex = -1;
 
     function loadState() {
       try {
-        const raw =
-          localStorage.getItem(STORAGE_KEY) ||
-          localStorage.getItem("equipado_store_v2") ||
-          localStorage.getItem("equipado_store_v1");
+        const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return structuredClone(defaultState);
         const parsed = JSON.parse(raw);
         const docs = Array.isArray(parsed.docs) && parsed.docs.length ? parsed.docs : structuredClone(defaultState.docs);
-        docs.forEach((d) => {
-          d.type = d.type || "text";
-          d.paragraphs = Array.isArray(d.paragraphs) ? d.paragraphs : [];
-          d.pages = Array.isArray(d.pages) ? d.pages : [];
-          d.highlights = d.highlights || {};
-          Object.keys(d.highlights).forEach((k) => {
-            const val = d.highlights[k];
-            if (typeof val === "string") {
-              d.highlights[k] = { full: val, spans: [] };
-            } else if (val && typeof val === "object") {
-              d.highlights[k] = { full: val.full || "", spans: Array.isArray(val.spans) ? val.spans : [] };
-            }
-          });
-        });
         return {
           activeDocId: parsed.activeDocId || docs[0].id,
           highlightColor: parsed.highlightColor || "hl-yellow",
-          compactControls: Boolean(parsed.compactControls),
           docs,
           notes: Array.isArray(parsed.notes) ? parsed.notes : []
         };
@@ -769,12 +703,6 @@
       document.querySelectorAll(".color-dot[data-color]").forEach((dot) => {
         dot.classList.toggle("active", dot.dataset.color === colorClass);
       });
-      saveState();
-      renderStudy();
-    }
-
-    function toggleCompactControls() {
-      state.compactControls = !state.compactControls;
       saveState();
       renderStudy();
     }
@@ -913,7 +841,7 @@
       const quoteEl = document.getElementById("quickNoteQuote");
       const input = document.getElementById("quickNoteText");
 
-      const prefix = doc.type === "pdf" ? `Página ${blockIndex + 1}` : `Bloque ${blockIndex + 1}`;
+      const prefix = doc.type === "pdf" ? `Página ${blockIndex + 1}` : `Párrafo ${blockIndex + 1}`;
       label.textContent = `Nota en "${doc.title}" · ${prefix}`;
       if (quoteText) {
         quoteEl.textContent = `“${quoteText}”`;
@@ -940,7 +868,7 @@
 
       const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
       const { paraIndex, quote } = activeNoteContext;
-      const prefix = doc.type === "pdf" ? `Página ${paraIndex + 1}` : `Bloque ${paraIndex + 1}`;
+      const prefix = doc.type === "pdf" ? `Página ${paraIndex + 1}` : `Párrafo ${paraIndex + 1}`;
 
       state.notes.unshift({
         id: "note-" + Date.now(),
@@ -989,94 +917,13 @@
       return html;
     }
 
-    function populateJumpMenu(doc) {
-      const select = document.getElementById("jumpSelect");
-      select.innerHTML = `<option value="">Saltar a...</option>`;
-
-      if (doc.type === "pdf" && Array.isArray(doc.pages)) {
-        doc.pages.forEach((pg, i) => {
-          const opt = document.createElement("option");
-          opt.value = String(i);
-          opt.textContent = `Página ${pg.pageNum || i + 1}`;
-          select.appendChild(opt);
-        });
-        return;
-      }
-
-      (doc.paragraphs || []).forEach((item, i) => {
-        if (typeof item === "string" && item.length > 0) {
-          const preview = item.slice(0, 34).replace(/\s+/g, " ");
-          const opt = document.createElement("option");
-          opt.value = String(i);
-          opt.textContent = `${i + 1}. ${preview}${item.length > 34 ? "…" : ""}`;
-          select.appendChild(opt);
-        }
-      });
-    }
-
-    function jumpToItem(val) {
-      if (val === "") return;
-      const el = document.querySelector(`[data-block-index="${Number(val)}"]`);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-
-    function runDocSearch() {
-      const q = document.getElementById("docSearchInput").value.trim().toLowerCase();
-      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
-      searchHits = [];
-      currentHitIndex = -1;
-
-      document.querySelectorAll(".search-hit").forEach((el) => el.classList.remove("search-hit"));
-
-      if (!q) {
-        document.getElementById("searchStatus").textContent = "Sin búsqueda activa";
-        return;
-      }
-
-      if (doc.type === "pdf" && Array.isArray(doc.pages)) {
-        doc.pages.forEach((pg, idx) => {
-          if ((pg.text || "").toLowerCase().includes(q)) searchHits.push(idx);
-        });
-      } else {
-        (doc.paragraphs || []).forEach((item, idx) => {
-          if (typeof item === "string" && item.toLowerCase().includes(q)) searchHits.push(idx);
-        });
-      }
-
-      if (!searchHits.length) {
-        document.getElementById("searchStatus").textContent = "Sin coincidencias";
-        return;
-      }
-
-      currentHitIndex = 0;
-      highlightCurrentSearchHit();
-    }
-
-    function jumpSearchHit(dir) {
-      if (!searchHits.length) return;
-      currentHitIndex = (currentHitIndex + dir + searchHits.length) % searchHits.length;
-      highlightCurrentSearchHit();
-    }
-
-    function highlightCurrentSearchHit() {
-      document.querySelectorAll(".search-hit").forEach((el) => el.classList.remove("search-hit"));
-      const blockIdx = searchHits[currentHitIndex];
-      const el = document.querySelector(`[data-block-index="${blockIdx}"]`);
-      if (el) {
-        el.classList.add("search-hit");
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-      document.getElementById("searchStatus").textContent =
-        `Coincidencia ${currentHitIndex + 1} de ${searchHits.length}`;
-    }
-
     function renderStudy() {
       const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
       document.getElementById("studyDocTitle").textContent = doc.title;
       document.getElementById("studyDocMeta").textContent =
-        `${doc.category || "Texto"} · Selecciona texto para subrayar o toca "Anotar"`;
-
-      populateJumpMenu(doc);
+        doc.type === "pdf"
+          ? "PDF · Toca una página para ampliarla o pulsa Anotar"
+          : `${doc.category || "Texto"} · Selecciona texto para subrayar o pulsa Anotar`;
 
       const notesCountByBlock = {};
       state.notes.forEach((n) => {
@@ -1086,7 +933,6 @@
       });
 
       const reader = document.getElementById("readerContent");
-      reader.classList.toggle("compact-actions", Boolean(state.compactControls));
       reader.innerHTML = "";
 
       if (doc.type === "pdf" && Array.isArray(doc.pages)) {
@@ -1133,15 +979,6 @@
             img.className = "pdf-page-img";
             img.onclick = () => openLightbox(pg.imageDataUrl);
             card.appendChild(img);
-          }
-
-          if (pg.text) {
-            const txtBox = document.createElement("div");
-            txtBox.className = "para-text";
-            txtBox.dataset.paraIndex = idx;
-            txtBox.style.marginTop = "8px";
-            txtBox.innerHTML = buildHighlightedTextHtml(pg.text, entry);
-            card.appendChild(txtBox);
           }
 
           reader.appendChild(card);
@@ -1216,8 +1053,7 @@
         if (part === "..") stack.pop();
         else stack.push(part);
       }
-      const joined = stack.join("/");
-      return joined.replace(/^\/+/, "");
+      return stack.join("/").replace(/^\/+/, "");
     }
 
     function blobToDataUrl(blob) {
@@ -1341,7 +1177,6 @@
             state = {
               activeDocId: parsed.activeDocId || parsed.docs[0]?.id || "doc-welcome",
               highlightColor: parsed.highlightColor || "hl-yellow",
-              compactControls: Boolean(parsed.compactControls),
               docs: parsed.docs,
               notes: parsed.notes
             };
@@ -1426,28 +1261,20 @@
               "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
             const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
             const pages = [];
-            const maxPages = Math.min(pdf.numPages, 40);
+            const maxPages = Math.min(pdf.numPages, 35);
 
             for (let p = 1; p <= maxPages; p++) {
               const page = await pdf.getPage(p);
-              const viewport = page.getViewport({ scale: 1.25 });
+              const viewport = page.getViewport({ scale: 1.2 });
               const canvas = document.createElement("canvas");
               const ctx = canvas.getContext("2d");
               canvas.width = viewport.width;
               canvas.height = viewport.height;
               await page.render({ canvasContext: ctx, viewport }).promise;
 
-              const content = await page.getTextContent();
-              const pageText = content.items
-                .map((item) => item.str)
-                .join(" ")
-                .replace(/\s+/g, " ")
-                .trim();
-
               pages.push({
                 pageNum: p,
-                imageDataUrl: canvas.toDataURL("image/jpeg", 0.72),
-                text: pageText
+                imageDataUrl: canvas.toDataURL("image/jpeg", 0.72)
               });
             }
 
@@ -1457,7 +1284,6 @@
               category: "PDF",
               type: "pdf",
               pages,
-              paragraphs: pages.map((pg) => pg.text || ""),
               highlights: {}
             });
           } else {
