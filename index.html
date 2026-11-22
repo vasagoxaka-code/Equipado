@@ -40,8 +40,8 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--ink);
-      line-height: 1.55;
-      padding-bottom: 78px;
+      line-height: 1.58;
+      padding-bottom: 88px;
     }
 
     header {
@@ -82,7 +82,7 @@
     }
 
     main {
-      max-width: 920px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 16px;
     }
@@ -131,8 +131,9 @@
     .btn-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       margin-top: 10px;
+      align-items: center;
     }
 
     button, select, input[type="text"], textarea {
@@ -144,7 +145,7 @@
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--ink);
-      padding: 10px 14px;
+      padding: 9px 13px;
       border-radius: 10px;
       font-weight: 600;
       cursor: pointer;
@@ -153,6 +154,12 @@
       justify-content: center;
       gap: 6px;
       text-decoration: none;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border-radius: 8px;
     }
 
     .btn-primary {
@@ -183,7 +190,7 @@
     }
 
     textarea {
-      min-height: 110px;
+      min-height: 95px;
       resize: vertical;
     }
 
@@ -219,29 +226,133 @@
       margin-right: 6px;
     }
 
+    .pro-toolbar {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .pro-grid {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
     .reader-paragraph {
-      padding: 8px 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin: 8px 0;
+      border: 1px solid transparent;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .reader-paragraph.has-note {
+      border-color: #e4c792;
+      background: #fffdf8;
+    }
+
+    .reader-paragraph.search-hit {
+      outline: 2px solid var(--accent);
+      background: #fffaf0;
+    }
+
+    .reader-img-box {
+      margin: 12px 0;
+      text-align: center;
+      background: #faf8f4;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .reader-img-box img {
+      max-width: 100%;
+      height: auto;
       border-radius: 8px;
-      margin: 6px 0;
-      cursor: pointer;
-      transition: background 0.15s ease;
+      cursor: zoom-in;
+      display: block;
+      margin: 0 auto;
     }
 
-    .reader-paragraph:hover {
-      background: #f5f2eb;
+    .pdf-page-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin: 12px 0;
+      background: #fcfbf8;
     }
 
-    .hl-yellow { background: var(--hl-yellow); }
-    .hl-green { background: var(--hl-green); }
-    .hl-blue { background: var(--hl-blue); }
-    .hl-pink { background: var(--hl-pink); }
+    .pdf-page-img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: zoom-in;
+      display: block;
+      margin-top: 8px;
+    }
+
+    .para-actions {
+      margin-top: 6px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .compact-actions .para-actions {
+      display: none;
+    }
+
+    .hl-yellow { background: var(--hl-yellow); border-radius: 3px; padding: 1px 2px; }
+    .hl-green { background: var(--hl-green); border-radius: 3px; padding: 1px 2px; }
+    .hl-blue { background: var(--hl-blue); border-radius: 3px; padding: 1px 2px; }
+    .hl-pink { background: var(--hl-pink); border-radius: 3px; padding: 1px 2px; }
 
     .color-dot {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      border: 2px solid rgba(0, 0, 0, 0.2);
+      border: 2px solid rgba(0, 0, 0, 0.22);
       cursor: pointer;
+    }
+
+    .color-dot.active {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .floating-toolbar {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 72px;
+      z-index: 30;
+      background: #1b2430;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .quick-note-box {
+      background: #fbf8f1;
+      border: 1px solid #dfc596;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
     }
 
     .note-card {
@@ -250,6 +361,35 @@
       border-radius: 10px;
       padding: 12px;
       margin-top: 10px;
+      background: #fff;
+    }
+
+    .note-quote {
+      background: var(--surface-alt);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.83rem;
+      color: var(--ink);
+      margin-top: 6px;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(12, 17, 24, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 82vh;
+      border-radius: 10px;
       background: #fff;
     }
 
@@ -307,11 +447,11 @@
       <div class="card hero-card">
         <span class="badge-pill">Biblioteca Personal Sin Conexión</span>
         <h2>Tu espacio de estudio listo en cualquier lugar</h2>
-        <p>Importa tus archivos locales o descarga publicaciones para tenerlas a mano y tomar notas ordenadas.</p>
+        <p>Importa tus archivos EPUB, PDF o texto con sus imágenes, subraya, busca y toma notas ordenadas.</p>
 
         <div class="btn-row">
           <label class="btn btn-light" for="fileInput">
-            Importar texto / archivo
+            Importar EPUB / PDF / texto
           </label>
           <input id="fileInput" type="file" accept=".txt,.md,.html,.json,.epub,.pdf" multiple class="hidden" />
         </div>
@@ -329,12 +469,12 @@
       </div>
 
       <div class="info-box card">
-        <strong>Cómo usarlo rápido:</strong> Abre <em>Ir a publicaciones en jw.org</em> en el idioma que prefieras, guarda lo que necesites en tu dispositivo y luego añádelo aquí o pega tus pasajes y notas de estudio. Todo queda guardado en este navegador.
+        <strong>Herramientas rápidas:</strong> En <em>Estudio</em> puedes buscar palabras, saltar a un bloque o página, ver imágenes a pantalla completa, subrayar frases o párrafos y añadir notas al instante.
       </div>
 
       <div class="card">
         <h3>Publicaciones y textos guardados</h3>
-        <p class="muted">Toca <strong>Leer</strong> para abrir un texto o <strong>Nota</strong> para añadir apuntes.</p>
+        <p class="muted">Toca <strong>Leer</strong> para abrir un documento o <strong>Borrar</strong> si quieres liberar espacio.</p>
         <div id="docList"></div>
       </div>
     </section>
@@ -345,15 +485,46 @@
         <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
           <div>
             <h2 id="studyDocTitle">Selecciona un texto para estudiar</h2>
-            <p class="muted" id="studyDocMeta">Toca un párrafo para subrayarlo o anotar.</p>
+            <p class="muted" id="studyDocMeta">Selecciona texto para subrayar o toca "Anotar" en un bloque.</p>
           </div>
           <div class="btn-row" style="margin-top:0;">
-            <button type="button" class="color-dot" style="background:var(--hl-yellow);" onclick="setHighlightColor('hl-yellow')" title="Amarillo"></button>
-            <button type="button" class="color-dot" style="background:var(--hl-green);" onclick="setHighlightColor('hl-green')" title="Verde"></button>
-            <button type="button" class="color-dot" style="background:var(--hl-blue);" onclick="setHighlightColor('hl-blue')" title="Azul"></button>
-            <button type="button" class="color-dot" style="background:var(--hl-pink);" onclick="setHighlightColor('hl-pink')" title="Rosa"></button>
+            <button type="button" class="color-dot active" data-color="hl-yellow" style="background:var(--hl-yellow);" onclick="setHighlightColor('hl-yellow')" title="Amarillo"></button>
+            <button type="button" class="color-dot" data-color="hl-green" style="background:var(--hl-green);" onclick="setHighlightColor('hl-green')" title="Verde"></button>
+            <button type="button" class="color-dot" data-color="hl-blue" style="background:var(--hl-blue);" onclick="setHighlightColor('hl-blue')" title="Azul"></button>
+            <button type="button" class="color-dot" data-color="hl-pink" style="background:var(--hl-pink);" onclick="setHighlightColor('hl-pink')" title="Rosa"></button>
+            <button type="button" class="btn btn-sm" onclick="toggleCompactControls()" title="Mostrar u ocultar botones de párrafo">Botones</button>
+            <button type="button" class="btn btn-sm" onclick="clearCurrentDocHighlights()">Limpiar marcas</button>
           </div>
         </div>
+
+        <!-- BARRA PRO ESTILO PDF EXPERT -->
+        <div class="pro-toolbar">
+          <div class="pro-grid">
+            <input type="text" id="docSearchInput" placeholder="Buscar palabra o frase en este documento..." oninput="runDocSearch()" />
+            <button type="button" class="btn btn-sm" onclick="jumpSearchHit(-1)">▲</button>
+            <button type="button" class="btn btn-sm" onclick="jumpSearchHit(1)">▼</button>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span id="searchStatus" class="muted">Sin búsqueda activa</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <label for="jumpSelect" class="muted">Ir a:</label>
+              <select id="jumpSelect" style="width:auto; padding:6px 8px; font-size:0.82rem;" onchange="jumpToItem(this.value)"></select>
+            </div>
+          </div>
+        </div>
+
+        <div id="quickNoteEditor" class="quick-note-box hidden">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <strong id="quickNoteLabel">Anotación rápida</strong>
+            <button type="button" class="btn btn-sm" onclick="closeQuickNote()">Cerrar</button>
+          </div>
+          <div id="quickNoteQuote" class="note-quote hidden"></div>
+          <textarea id="quickNoteText" placeholder="Escribe aquí tu comentario, idea o aplicación..." style="margin-top:8px;"></textarea>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary btn-sm" onclick="saveQuickParagraphNote()">Guardar nota</button>
+          </div>
+        </div>
+
         <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;" />
         <div id="readerContent"></div>
       </div>
@@ -399,6 +570,27 @@
     </section>
   </main>
 
+  <!-- VISOR DE IMAGEN A PANTALLA COMPLETA -->
+  <div id="imageLightbox" class="lightbox hidden" onclick="closeLightbox()">
+    <img id="lightboxImg" src="" alt="Imagen ampliada" onclick="event.stopPropagation()" />
+    <button type="button" class="btn btn-light" onclick="closeLightbox()">Cerrar imagen</button>
+  </div>
+
+  <!-- BARRA FLOTANTE AL SELECCIONAR TEXTO -->
+  <div id="selectionBar" class="floating-toolbar hidden" role="region" aria-label="Herramientas de selección">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button type="button" class="color-dot" style="background:var(--hl-yellow);" onclick="applySelectionHighlight('hl-yellow')" title="Amarillo"></button>
+      <button type="button" class="color-dot" style="background:var(--hl-green);" onclick="applySelectionHighlight('hl-green')" title="Verde"></button>
+      <button type="button" class="color-dot" style="background:var(--hl-blue);" onclick="applySelectionHighlight('hl-blue')" title="Azul"></button>
+      <button type="button" class="color-dot" style="background:var(--hl-pink);" onclick="applySelectionHighlight('hl-pink')" title="Rosa"></button>
+      <button type="button" class="btn btn-sm" onclick="removeSelectionHighlight()">Quitar</button>
+    </div>
+    <div style="display:flex; align-items:center; gap:6px;">
+      <button type="button" class="btn btn-primary btn-sm" onclick="openNoteFromSelection()">+ Nota</button>
+      <button type="button" class="btn btn-sm" onclick="hideSelectionBar()">✕</button>
+    </div>
+  </div>
+
   <nav class="bottom-nav" aria-label="Navegación principal">
     <button type="button" class="nav-btn active" data-tab="tab-library" onclick="switchTab('tab-library', this)">
       <span>Biblioteca</span>
@@ -415,20 +607,22 @@
   </nav>
 
   <script>
-    const STORAGE_KEY = "equipado_store_v1";
+    const STORAGE_KEY = "equipado_store_v3";
 
     const defaultState = {
       activeDocId: "doc-welcome",
       highlightColor: "hl-yellow",
+      compactControls: false,
       docs: [
         {
           id: "doc-welcome",
           title: "Guía inicial de estudio personal",
           category: "Nota base",
+          type: "text",
           paragraphs: [
-            "Bienvenido a Equipado. Aquí puedes reunir lecturas, subrayar ideas principales y guardar tus notas de estudio en un solo lugar.",
-            "Toca cualquier párrafo en la pestaña Estudio para aplicar o quitar el color de subrayado seleccionado arriba.",
-            "Puedes añadir nuevos textos desde esta misma pestaña o importar archivos de texto, EPUB o PDF desde tu dispositivo."
+            "Bienvenido a Equipado. Selecciona cualquier frase o palabra con el dedo y verás la barra rápida para subrayar o añadir una nota.",
+            "También puedes pulsar el botón 'Anotar' debajo de cada bloque para escribir tus ideas sin salir de la lectura.",
+            "Al importar archivos EPUB o PDF se conservan las imágenes para verlas o ampliarlas."
           ],
           highlights: {}
         }
@@ -438,6 +632,9 @@
           id: "note-1",
           title: "Ejemplo de punto clave",
           ref: "Guía inicial",
+          quote: "",
+          docId: "doc-welcome",
+          paraIndex: 0,
           body: "Anota aquí las ideas principales, preguntas para profundizar o aplicaciones prácticas.",
           updatedAt: new Date().toLocaleDateString("es-ES")
         }
@@ -445,16 +642,39 @@
     };
 
     let state = loadState();
+    let pendingSelection = null;
+    let activeNoteContext = null;
+    let searchHits = [];
+    let currentHitIndex = -1;
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw =
+          localStorage.getItem(STORAGE_KEY) ||
+          localStorage.getItem("equipado_store_v2") ||
+          localStorage.getItem("equipado_store_v1");
         if (!raw) return structuredClone(defaultState);
         const parsed = JSON.parse(raw);
+        const docs = Array.isArray(parsed.docs) && parsed.docs.length ? parsed.docs : structuredClone(defaultState.docs);
+        docs.forEach((d) => {
+          d.type = d.type || "text";
+          d.paragraphs = Array.isArray(d.paragraphs) ? d.paragraphs : [];
+          d.pages = Array.isArray(d.pages) ? d.pages : [];
+          d.highlights = d.highlights || {};
+          Object.keys(d.highlights).forEach((k) => {
+            const val = d.highlights[k];
+            if (typeof val === "string") {
+              d.highlights[k] = { full: val, spans: [] };
+            } else if (val && typeof val === "object") {
+              d.highlights[k] = { full: val.full || "", spans: Array.isArray(val.spans) ? val.spans : [] };
+            }
+          });
+        });
         return {
-          activeDocId: parsed.activeDocId || "doc-welcome",
+          activeDocId: parsed.activeDocId || docs[0].id,
           highlightColor: parsed.highlightColor || "hl-yellow",
-          docs: Array.isArray(parsed.docs) && parsed.docs.length ? parsed.docs : structuredClone(defaultState.docs),
+          compactControls: Boolean(parsed.compactControls),
+          docs,
           notes: Array.isArray(parsed.notes) ? parsed.notes : []
         };
       } catch (e) {
@@ -465,12 +685,15 @@
     function saveState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        document.getElementById("storageBadge").textContent = "Offline listo";
       } catch (e) {
         console.warn("No se pudo guardar en localStorage:", e);
+        document.getElementById("storageBadge").textContent = "Memoria llena";
       }
     }
 
     function switchTab(tabId, btnEl) {
+      hideSelectionBar();
       document.querySelectorAll("main > section").forEach((sec) => {
         sec.classList.toggle("hidden", sec.id !== tabId);
       });
@@ -496,61 +719,513 @@
       const container = document.getElementById("docList");
       container.innerHTML = "";
       state.docs.forEach((doc) => {
+        const countLabel =
+          doc.type === "pdf"
+            ? `${doc.pages?.length || 0} páginas`
+            : `${doc.paragraphs?.length || 0} bloques`;
         const row = document.createElement("div");
         row.className = "doc-item";
         row.innerHTML = `
           <div>
             <span class="doc-tag">${escapeHtml(doc.category || "Texto")}</span>
             <strong>${escapeHtml(doc.title)}</strong>
-            <div class="muted">${doc.paragraphs.length} párrafos</div>
+            <div class="muted">${countLabel}</div>
           </div>
           <div class="btn-row" style="margin-top:0;">
-            <button type="button" class="btn btn-primary" onclick="openDoc('${doc.id}')">Leer</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openDoc('${doc.id}')">Leer</button>
+            ${state.docs.length > 1 ? `<button type="button" class="btn btn-sm" onclick="deleteDoc('${doc.id}')">Borrar</button>` : ""}
           </div>
         `;
         container.appendChild(row);
       });
     }
 
-    function openDoc(docId) {
+    function deleteDoc(docId) {
+      state.docs = state.docs.filter((d) => d.id !== docId);
+      if (!state.docs.length) state.docs = structuredClone(defaultState.docs);
+      if (state.activeDocId === docId) state.activeDocId = state.docs[0].id;
+      saveState();
+      renderLibrary();
+      renderStudy();
+    }
+
+    function openDoc(docId, targetIndex = null) {
       state.activeDocId = docId;
       saveState();
       switchTab("tab-study");
+      if (typeof targetIndex === "number") {
+        setTimeout(() => {
+          const el = document.querySelector(`[data-block-index="${targetIndex}"]`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            openQuickNoteForBlock(targetIndex, "");
+          }
+        }, 120);
+      }
     }
 
     function setHighlightColor(colorClass) {
       state.highlightColor = colorClass;
+      document.querySelectorAll(".color-dot[data-color]").forEach((dot) => {
+        dot.classList.toggle("active", dot.dataset.color === colorClass);
+      });
       saveState();
       renderStudy();
     }
 
-    function toggleParagraphHighlight(index) {
+    function toggleCompactControls() {
+      state.compactControls = !state.compactControls;
+      saveState();
+      renderStudy();
+    }
+
+    function openLightbox(src) {
+      if (!src) return;
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("imageLightbox").classList.remove("hidden");
+    }
+
+    function closeLightbox() {
+      document.getElementById("imageLightbox").classList.add("hidden");
+      document.getElementById("lightboxImg").src = "";
+    }
+
+    function getTextOffsetInContainer(container, targetNode, targetOffset) {
+      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+      let pos = 0;
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node === targetNode) {
+          return pos + Math.min(targetOffset, node.textContent.length);
+        }
+        pos += node.textContent.length;
+      }
+      return pos;
+    }
+
+    function handleSelectionChange() {
+      const studyVisible = !document.getElementById("tab-study").classList.contains("hidden");
+      if (!studyVisible) return;
+
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+      const startPara = range.startContainer.nodeType === 1
+        ? range.startContainer.closest(".para-text")
+        : range.startContainer.parentElement?.closest(".para-text");
+      const endPara = range.endContainer.nodeType === 1
+        ? range.endContainer.closest(".para-text")
+        : range.endContainer.parentElement?.closest(".para-text");
+
+      if (!startPara || startPara !== endPara) return;
+
+      const paraIndex = Number(startPara.dataset.paraIndex);
+      const rawStart = getTextOffsetInContainer(startPara, range.startContainer, range.startOffset);
+      const rawEnd = getTextOffsetInContainer(startPara, range.endContainer, range.endOffset);
+      const start = Math.min(rawStart, rawEnd);
+      const end = Math.max(rawStart, rawEnd);
+      const text = startPara.textContent.slice(start, end).trim();
+
+      if (!text || end <= start) return;
+
+      pendingSelection = { paraIndex, start, end, text };
+      document.getElementById("selectionBar").classList.remove("hidden");
+    }
+
+    function hideSelectionBar() {
+      pendingSelection = null;
+      document.getElementById("selectionBar").classList.add("hidden");
+    }
+
+    function applySelectionHighlight(colorClass) {
+      if (!pendingSelection) return;
       const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
-      if (!doc) return;
+      const { paraIndex, start, end } = pendingSelection;
       doc.highlights = doc.highlights || {};
-      if (doc.highlights[index] === state.highlightColor) {
-        delete doc.highlights[index];
+      const entry = doc.highlights[paraIndex] || { full: "", spans: [] };
+
+      entry.spans = (entry.spans || []).filter((s) => s.end <= start || s.start >= end);
+      entry.spans.push({ start, end, color: colorClass });
+      entry.spans.sort((a, b) => a.start - b.start);
+
+      doc.highlights[paraIndex] = entry;
+      state.highlightColor = colorClass;
+      saveState();
+
+      window.getSelection()?.removeAllRanges();
+      hideSelectionBar();
+      renderStudy();
+    }
+
+    function removeSelectionHighlight() {
+      if (!pendingSelection) return;
+      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+      const { paraIndex, start, end } = pendingSelection;
+      const entry = doc.highlights?.[paraIndex];
+      if (entry) {
+        entry.spans = (entry.spans || []).filter((s) => s.end <= start || s.start >= end);
+        if (entry.full && start === 0) entry.full = "";
+        if (!entry.full && !entry.spans.length) delete doc.highlights[paraIndex];
+      }
+      saveState();
+      window.getSelection()?.removeAllRanges();
+      hideSelectionBar();
+      renderStudy();
+    }
+
+    function toggleFullBlockHighlight(blockIndex) {
+      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+      doc.highlights = doc.highlights || {};
+      const entry = doc.highlights[blockIndex] || { full: "", spans: [] };
+
+      entry.full = entry.full === state.highlightColor ? "" : state.highlightColor;
+      if (!entry.full && !entry.spans.length) {
+        delete doc.highlights[blockIndex];
       } else {
-        doc.highlights[index] = state.highlightColor;
+        doc.highlights[blockIndex] = entry;
       }
       saveState();
       renderStudy();
     }
 
+    function clearCurrentDocHighlights() {
+      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+      doc.highlights = {};
+      saveState();
+      renderStudy();
+    }
+
+    function openNoteFromSelection() {
+      if (!pendingSelection) return;
+      const { paraIndex, text } = pendingSelection;
+      window.getSelection()?.removeAllRanges();
+      hideSelectionBar();
+      openQuickNoteForBlock(paraIndex, text);
+    }
+
+    function openQuickNoteForBlock(blockIndex, quoteText = "") {
+      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+      activeNoteContext = { paraIndex: blockIndex, quote: quoteText };
+
+      const box = document.getElementById("quickNoteEditor");
+      const label = document.getElementById("quickNoteLabel");
+      const quoteEl = document.getElementById("quickNoteQuote");
+      const input = document.getElementById("quickNoteText");
+
+      const prefix = doc.type === "pdf" ? `Página ${blockIndex + 1}` : `Bloque ${blockIndex + 1}`;
+      label.textContent = `Nota en "${doc.title}" · ${prefix}`;
+      if (quoteText) {
+        quoteEl.textContent = `“${quoteText}”`;
+        quoteEl.classList.remove("hidden");
+      } else {
+        quoteEl.textContent = "";
+        quoteEl.classList.add("hidden");
+      }
+      input.value = "";
+      box.classList.remove("hidden");
+      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function closeQuickNote() {
+      activeNoteContext = null;
+      document.getElementById("quickNoteEditor").classList.add("hidden");
+      document.getElementById("quickNoteText").value = "";
+    }
+
+    function saveQuickParagraphNote() {
+      const body = document.getElementById("quickNoteText").value.trim();
+      if (!body || !activeNoteContext) return;
+
+      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+      const { paraIndex, quote } = activeNoteContext;
+      const prefix = doc.type === "pdf" ? `Página ${paraIndex + 1}` : `Bloque ${paraIndex + 1}`;
+
+      state.notes.unshift({
+        id: "note-" + Date.now(),
+        title: `${doc.title} (${prefix})`,
+        ref: `${doc.title} · ${prefix}`,
+        quote,
+        docId: doc.id,
+        paraIndex,
+        body,
+        updatedAt: new Date().toLocaleDateString("es-ES")
+      });
+
+      saveState();
+      closeQuickNote();
+      renderStudy();
+      renderNotes();
+    }
+
+    function buildHighlightedTextHtml(text, entry) {
+      if (!entry) return escapeHtml(text);
+      const spans = Array.isArray(entry.spans) ? entry.spans : [];
+      if (!spans.length) {
+        return entry.full ? `<span class="${entry.full}">${escapeHtml(text)}</span>` : escapeHtml(text);
+      }
+
+      let cursor = 0;
+      let html = "";
+      spans.forEach((sp) => {
+        const s = Math.max(cursor, Math.min(text.length, sp.start));
+        const e = Math.max(s, Math.min(text.length, sp.end));
+        if (s > cursor) {
+          const chunk = text.slice(cursor, s);
+          html += entry.full ? `<span class="${entry.full}">${escapeHtml(chunk)}</span>` : escapeHtml(chunk);
+        }
+        if (e > s) {
+          const marked = text.slice(s, e);
+          html += `<span class="${sp.color}">${escapeHtml(marked)}</span>`;
+        }
+        cursor = e;
+      });
+
+      if (cursor < text.length) {
+        const rest = text.slice(cursor);
+        html += entry.full ? `<span class="${entry.full}">${escapeHtml(rest)}</span>` : escapeHtml(rest);
+      }
+      return html;
+    }
+
+    function populateJumpMenu(doc) {
+      const select = document.getElementById("jumpSelect");
+      select.innerHTML = `<option value="">Saltar a...</option>`;
+
+      if (doc.type === "pdf" && Array.isArray(doc.pages)) {
+        doc.pages.forEach((pg, i) => {
+          const opt = document.createElement("option");
+          opt.value = String(i);
+          opt.textContent = `Página ${pg.pageNum || i + 1}`;
+          select.appendChild(opt);
+        });
+        return;
+      }
+
+      (doc.paragraphs || []).forEach((item, i) => {
+        if (typeof item === "string" && item.length > 0) {
+          const preview = item.slice(0, 34).replace(/\s+/g, " ");
+          const opt = document.createElement("option");
+          opt.value = String(i);
+          opt.textContent = `${i + 1}. ${preview}${item.length > 34 ? "…" : ""}`;
+          select.appendChild(opt);
+        }
+      });
+    }
+
+    function jumpToItem(val) {
+      if (val === "") return;
+      const el = document.querySelector(`[data-block-index="${Number(val)}"]`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function runDocSearch() {
+      const q = document.getElementById("docSearchInput").value.trim().toLowerCase();
+      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+      searchHits = [];
+      currentHitIndex = -1;
+
+      document.querySelectorAll(".search-hit").forEach((el) => el.classList.remove("search-hit"));
+
+      if (!q) {
+        document.getElementById("searchStatus").textContent = "Sin búsqueda activa";
+        return;
+      }
+
+      if (doc.type === "pdf" && Array.isArray(doc.pages)) {
+        doc.pages.forEach((pg, idx) => {
+          if ((pg.text || "").toLowerCase().includes(q)) searchHits.push(idx);
+        });
+      } else {
+        (doc.paragraphs || []).forEach((item, idx) => {
+          if (typeof item === "string" && item.toLowerCase().includes(q)) searchHits.push(idx);
+        });
+      }
+
+      if (!searchHits.length) {
+        document.getElementById("searchStatus").textContent = "Sin coincidencias";
+        return;
+      }
+
+      currentHitIndex = 0;
+      highlightCurrentSearchHit();
+    }
+
+    function jumpSearchHit(dir) {
+      if (!searchHits.length) return;
+      currentHitIndex = (currentHitIndex + dir + searchHits.length) % searchHits.length;
+      highlightCurrentSearchHit();
+    }
+
+    function highlightCurrentSearchHit() {
+      document.querySelectorAll(".search-hit").forEach((el) => el.classList.remove("search-hit"));
+      const blockIdx = searchHits[currentHitIndex];
+      const el = document.querySelector(`[data-block-index="${blockIdx}"]`);
+      if (el) {
+        el.classList.add("search-hit");
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      document.getElementById("searchStatus").textContent =
+        `Coincidencia ${currentHitIndex + 1} de ${searchHits.length}`;
+    }
+
     function renderStudy() {
       const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
       document.getElementById("studyDocTitle").textContent = doc.title;
-      document.getElementById("studyDocMeta").textContent = `${doc.category || "Texto"} · Color activo: ${state.highlightColor.replace("hl-", "")}`;
+      document.getElementById("studyDocMeta").textContent =
+        `${doc.category || "Texto"} · Selecciona texto para subrayar o toca "Anotar"`;
+
+      populateJumpMenu(doc);
+
+      const notesCountByBlock = {};
+      state.notes.forEach((n) => {
+        if (n.docId === doc.id && typeof n.paraIndex === "number") {
+          notesCountByBlock[n.paraIndex] = (notesCountByBlock[n.paraIndex] || 0) + 1;
+        }
+      });
 
       const reader = document.getElementById("readerContent");
+      reader.classList.toggle("compact-actions", Boolean(state.compactControls));
       reader.innerHTML = "";
-      doc.paragraphs.forEach((pText, idx) => {
-        const p = document.createElement("div");
-        const hlClass = (doc.highlights && doc.highlights[idx]) || "";
-        p.className = `reader-paragraph ${hlClass}`.trim();
-        p.textContent = pText;
-        p.onclick = () => toggleParagraphHighlight(idx);
-        reader.appendChild(p);
+
+      if (doc.type === "pdf" && Array.isArray(doc.pages)) {
+        doc.pages.forEach((pg, idx) => {
+          const entry = doc.highlights?.[idx];
+          const noteCount = notesCountByBlock[idx] || 0;
+          const card = document.createElement("div");
+          card.className = `pdf-page-card ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim();
+          card.dataset.blockIndex = idx;
+
+          const headerDiv = document.createElement("div");
+          headerDiv.style.display = "flex";
+          headerDiv.style.justifyContent = "space-between";
+          headerDiv.style.alignItems = "center";
+          headerDiv.style.gap = "8px";
+          headerDiv.style.flexWrap = "wrap";
+          headerDiv.innerHTML = `<strong>Página ${pg.pageNum || idx + 1}</strong>`;
+
+          const actionsDiv = document.createElement("div");
+          actionsDiv.className = "para-actions";
+          actionsDiv.style.marginTop = "0";
+
+          const btnMark = document.createElement("button");
+          btnMark.type = "button";
+          btnMark.className = "btn btn-sm";
+          btnMark.textContent = entry?.full === state.highlightColor ? "Quitar marca" : "Marcar página";
+          btnMark.onclick = () => toggleFullBlockHighlight(idx);
+
+          const btnNote = document.createElement("button");
+          btnNote.type = "button";
+          btnNote.className = "btn btn-sm";
+          btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
+          btnNote.onclick = () => openQuickNoteForBlock(idx, "");
+
+          actionsDiv.appendChild(btnMark);
+          actionsDiv.appendChild(btnNote);
+          headerDiv.appendChild(actionsDiv);
+          card.appendChild(headerDiv);
+
+          if (pg.imageDataUrl) {
+            const img = document.createElement("img");
+            img.src = pg.imageDataUrl;
+            img.alt = `Página ${pg.pageNum || idx + 1}`;
+            img.className = "pdf-page-img";
+            img.onclick = () => openLightbox(pg.imageDataUrl);
+            card.appendChild(img);
+          }
+
+          if (pg.text) {
+            const txtBox = document.createElement("div");
+            txtBox.className = "para-text";
+            txtBox.dataset.paraIndex = idx;
+            txtBox.style.marginTop = "8px";
+            txtBox.innerHTML = buildHighlightedTextHtml(pg.text, entry);
+            card.appendChild(txtBox);
+          }
+
+          reader.appendChild(card);
+        });
+        return;
+      }
+
+      (doc.paragraphs || []).forEach((item, idx) => {
+        if (item && typeof item === "object" && item.type === "image") {
+          const box = document.createElement("div");
+          box.className = "reader-img-box";
+          box.dataset.blockIndex = idx;
+          box.innerHTML = `
+            <img src="${item.src}" alt="${escapeHtml(item.alt || "Imagen")}" onclick="openLightbox('${item.src}')" />
+            <div class="muted" style="margin-top:6px;">Toca la imagen para ampliar</div>
+          `;
+          reader.appendChild(box);
+          return;
+        }
+
+        const pText = String(item || "");
+        const entry = doc.highlights?.[idx];
+        const noteCount = notesCountByBlock[idx] || 0;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = `reader-paragraph ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim();
+        wrapper.dataset.blockIndex = idx;
+
+        const textDiv = document.createElement("div");
+        textDiv.className = "para-text";
+        textDiv.dataset.paraIndex = idx;
+        textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);
+
+        const actionsDiv = document.createElement("div");
+        actionsDiv.className = "para-actions";
+
+        const btnSub = document.createElement("button");
+        btnSub.type = "button";
+        btnSub.className = "btn btn-sm";
+        btnSub.textContent = entry?.full === state.highlightColor ? "Quitar color párrafo" : "Subrayar párrafo";
+        btnSub.onclick = (ev) => {
+          ev.stopPropagation();
+          toggleFullBlockHighlight(idx);
+        };
+
+        const btnNote = document.createElement("button");
+        btnNote.type = "button";
+        btnNote.className = "btn btn-sm";
+        btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
+        btnNote.onclick = (ev) => {
+          ev.stopPropagation();
+          openQuickNoteForBlock(idx, "");
+        };
+
+        actionsDiv.appendChild(btnSub);
+        actionsDiv.appendChild(btnNote);
+        wrapper.appendChild(textDiv);
+        wrapper.appendChild(actionsDiv);
+        reader.appendChild(wrapper);
+      });
+    }
+
+    function resolveZipPath(baseHtmlPath, imgSrc) {
+      if (!imgSrc) return "";
+      if (imgSrc.startsWith("data:") || imgSrc.startsWith("http")) return imgSrc;
+      const cleanSrc = imgSrc.split("#")[0].split("?")[0];
+      const baseParts = baseHtmlPath.split("/").slice(0, -1);
+      const relParts = cleanSrc.split("/");
+      const stack = [...baseParts];
+      for (const part of relParts) {
+        if (!part || part === ".") continue;
+        if (part === "..") stack.pop();
+        else stack.push(part);
+      }
+      const joined = stack.join("/");
+      return joined.replace(/^\/+/, "");
+    }
+
+    function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(blob);
       });
     }
 
@@ -568,6 +1243,7 @@
         id: "doc-" + Date.now(),
         title,
         category: "Estudio",
+        type: "text",
         paragraphs: paragraphs.length ? paragraphs : [body],
         highlights: {}
       };
@@ -592,6 +1268,9 @@
         id: "note-" + Date.now(),
         title: title || "Nota sin título",
         ref,
+        quote: "",
+        docId: null,
+        paraIndex: null,
         body,
         updatedAt: new Date().toLocaleDateString("es-ES")
       });
@@ -607,6 +1286,7 @@
       state.notes = state.notes.filter((n) => n.id !== id);
       saveState();
       renderNotes();
+      renderStudy();
     }
 
     function renderNotes() {
@@ -628,8 +1308,12 @@
             </div>
             <span class="muted">${escapeHtml(n.updatedAt || "")}</span>
           </div>
+          ${n.quote ? `<div class="note-quote">${escapeHtml(n.quote)}</div>` : ""}
           <p style="margin-top:8px;">${escapeHtml(n.body)}</p>
-          <button type="button" class="btn" style="padding:6px 10px; font-size:0.8rem;" onclick="deleteNote('${n.id}')">Eliminar</button>
+          <div class="btn-row">
+            ${n.docId ? `<button type="button" class="btn btn-sm" onclick="openDoc('${n.docId}', ${typeof n.paraIndex === "number" ? n.paraIndex : "null"})">Ir al punto</button>` : ""}
+            <button type="button" class="btn btn-sm" onclick="deleteNote('${n.id}')">Eliminar</button>
+          </div>
         `;
         container.appendChild(card);
       });
@@ -657,6 +1341,7 @@
             state = {
               activeDocId: parsed.activeDocId || parsed.docs[0]?.id || "doc-welcome",
               highlightColor: parsed.highlightColor || "hl-yellow",
+              compactControls: Boolean(parsed.compactControls),
               docs: parsed.docs,
               notes: parsed.notes
             };
@@ -680,54 +1365,124 @@
       for (const file of files) {
         const name = file.name.toLowerCase();
         const cleanTitle = file.name.replace(/\.[^/.]+$/, "");
-        let paragraphs = [];
 
         try {
           if (name.endsWith(".epub") && typeof JSZip !== "undefined") {
             const zip = await JSZip.loadAsync(await file.arrayBuffer());
-            const htmlFiles = Object.keys(zip.files)
+            const allZipKeys = Object.keys(zip.files);
+            const imageCache = {};
+
+            for (const key of allZipKeys) {
+              if (!zip.files[key].dir && /\.(jpe?g|png|gif|webp|svg)$/i.test(key)) {
+                const blob = await zip.files[key].async("blob");
+                imageCache[key.toLowerCase()] = await blobToDataUrl(blob);
+              }
+            }
+
+            const htmlFiles = allZipKeys
               .filter((f) => !zip.files[f].dir && /\.(xhtml|html|htm)$/i.test(f))
               .sort();
-            let fullText = "";
+
+            const blocks = [];
             for (const path of htmlFiles) {
               const rawHtml = await zip.files[path].async("string");
               const docXml = new DOMParser().parseFromString(rawHtml, "text/html");
-              const blocks = Array.from(docXml.querySelectorAll("p, h1, h2, h3, h4, li"))
-                .map((el) => el.textContent.replace(/\s+/g, " ").trim())
-                .filter(Boolean);
-              if (blocks.length) {
-                fullText += blocks.join("\n\n") + "\n\n";
+              const nodes = Array.from(docXml.querySelectorAll("p, h1, h2, h3, h4, li, img"));
+
+              for (const node of nodes) {
+                if (node.tagName.toLowerCase() === "img") {
+                  const srcAttr = node.getAttribute("src") || "";
+                  const resolved = resolveZipPath(path, srcAttr).toLowerCase();
+                  let dataUrl = imageCache[resolved];
+                  if (!dataUrl) {
+                    const baseName = resolved.split("/").pop();
+                    const foundKey = Object.keys(imageCache).find((k) => k.endsWith("/" + baseName) || k === baseName);
+                    if (foundKey) dataUrl = imageCache[foundKey];
+                  }
+                  if (dataUrl) {
+                    blocks.push({
+                      type: "image",
+                      src: dataUrl,
+                      alt: node.getAttribute("alt") || cleanTitle
+                    });
+                  }
+                } else {
+                  const txt = node.textContent.replace(/\s+/g, " ").trim();
+                  if (txt) blocks.push(txt);
+                }
               }
             }
-            paragraphs = fullText.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+
+            state.docs.unshift({
+              id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+              title: cleanTitle,
+              category: "EPUB",
+              type: "epub",
+              paragraphs: blocks.length ? blocks : ["(Sin contenido legible)"],
+              highlights: {}
+            });
           } else if (name.endsWith(".pdf") && typeof pdfjsLib !== "undefined") {
             pdfjsLib.GlobalWorkerOptions.workerSrc =
               "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
             const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-            let pdfText = "";
-            for (let p = 1; p <= pdf.numPages; p++) {
+            const pages = [];
+            const maxPages = Math.min(pdf.numPages, 40);
+
+            for (let p = 1; p <= maxPages; p++) {
               const page = await pdf.getPage(p);
+              const viewport = page.getViewport({ scale: 1.25 });
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              await page.render({ canvasContext: ctx, viewport }).promise;
+
               const content = await page.getTextContent();
-              const pageStr = content.items.map((item) => item.str).join(" ").replace(/\s+/g, " ").trim();
-              if (pageStr) pdfText += pageStr + "\n\n";
+              const pageText = content.items
+                .map((item) => item.str)
+                .join(" ")
+                .replace(/\s+/g, " ")
+                .trim();
+
+              pages.push({
+                pageNum: p,
+                imageDataUrl: canvas.toDataURL("image/jpeg", 0.72),
+                text: pageText
+              });
             }
-            paragraphs = pdfText.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+
+            state.docs.unshift({
+              id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+              title: pdf.numPages > maxPages ? `${cleanTitle} (primeras ${maxPages} págs.)` : cleanTitle,
+              category: "PDF",
+              type: "pdf",
+              pages,
+              paragraphs: pages.map((pg) => pg.text || ""),
+              highlights: {}
+            });
           } else {
             const text = await file.text();
-            paragraphs = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+            const paragraphs = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+            state.docs.unshift({
+              id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+              title: cleanTitle,
+              category: "Importado",
+              type: "text",
+              paragraphs: paragraphs.length ? paragraphs : ["(Archivo vacío)"],
+              highlights: {}
+            });
           }
         } catch (err) {
           console.error("Error importando archivo:", err);
-          paragraphs = ["No se pudo extraer el texto completo de este archivo."];
+          state.docs.unshift({
+            id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+            title: cleanTitle,
+            category: "Error",
+            type: "text",
+            paragraphs: ["No se pudo procesar este archivo."],
+            highlights: {}
+          });
         }
-
-        state.docs.unshift({
-          id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
-          title: cleanTitle,
-          category: name.endsWith(".epub") ? "EPUB" : name.endsWith(".pdf") ? "PDF" : "Importado",
-          paragraphs: paragraphs.length ? paragraphs : ["(Sin texto legible)"],
-          highlights: {}
-        });
       }
 
       saveState();
@@ -736,6 +1491,7 @@
     });
 
     document.getElementById("jwLangSelect").addEventListener("change", updateJwLink);
+    document.addEventListener("selectionchange", handleSelectionChange);
 
     function escapeHtml(str) {
       return String(str || "")
@@ -751,6 +1507,7 @@
       });
     }
 
+    setHighlightColor(state.highlightColor);
     updateJwLink();
     renderLibrary();
     renderStudy();
