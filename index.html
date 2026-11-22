@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Equipado — Notas y Recursos de Estudio</title>
   <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
   <meta name="theme-color" content="#1e3a5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Equipado" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     :root {
       --bg: #f4f1ea;
@@ -310,7 +313,7 @@
           <label class="btn btn-light" for="fileInput">
             Importar texto / archivo
           </label>
-          <input id="fileInput" type="file" accept=".txt,.md,.html,.json" multiple class="hidden" />
+          <input id="fileInput" type="file" accept=".txt,.md,.html,.json,.epub,.pdf" multiple class="hidden" />
         </div>
 
         <div class="btn-row" style="margin-top: 12px;">
@@ -425,7 +428,7 @@
           paragraphs: [
             "Bienvenido a Equipado. Aquí puedes reunir lecturas, subrayar ideas principales y guardar tus notas de estudio en un solo lugar.",
             "Toca cualquier párrafo en la pestaña Estudio para aplicar o quitar el color de subrayado seleccionado arriba.",
-            "Puedes añadir nuevos textos desde esta misma pestaña o importar archivos de texto desde tu dispositivo."
+            "Puedes añadir nuevos textos desde esta misma pestaña o importar archivos de texto, EPUB o PDF desde tu dispositivo."
           ],
           highlights: {}
         }
@@ -523,4 +526,235 @@
 
     function toggleParagraphHighlight(index) {
       const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
-      if (!doc) return
+      if (!doc) return;
+      doc.highlights = doc.highlights || {};
+      if (doc.highlights[index] === state.highlightColor) {
+        delete doc.highlights[index];
+      } else {
+        doc.highlights[index] = state.highlightColor;
+      }
+      saveState();
+      renderStudy();
+    }
+
+    function renderStudy() {
+      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
+      document.getElementById("studyDocTitle").textContent = doc.title;
+      document.getElementById("studyDocMeta").textContent = `${doc.category || "Texto"} · Color activo: ${state.highlightColor.replace("hl-", "")}`;
+
+      const reader = document.getElementById("readerContent");
+      reader.innerHTML = "";
+      doc.paragraphs.forEach((pText, idx) => {
+        const p = document.createElement("div");
+        const hlClass = (doc.highlights && doc.highlights[idx]) || "";
+        p.className = `reader-paragraph ${hlClass}`.trim();
+        p.textContent = pText;
+        p.onclick = () => toggleParagraphHighlight(idx);
+        reader.appendChild(p);
+      });
+    }
+
+    function addQuickDoc() {
+      const title = document.getElementById("newDocTitle").value.trim();
+      const body = document.getElementById("newDocBody").value.trim();
+      if (!title || !body) return;
+
+      const paragraphs = body
+        .split(/\n+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const newDoc = {
+        id: "doc-" + Date.now(),
+        title,
+        category: "Estudio",
+        paragraphs: paragraphs.length ? paragraphs : [body],
+        highlights: {}
+      };
+
+      state.docs.unshift(newDoc);
+      state.activeDocId = newDoc.id;
+      saveState();
+
+      document.getElementById("newDocTitle").value = "";
+      document.getElementById("newDocBody").value = "";
+      renderLibrary();
+      renderStudy();
+    }
+
+    function saveNote() {
+      const title = document.getElementById("noteTitleInput").value.trim();
+      const ref = document.getElementById("noteRefInput").value.trim();
+      const body = document.getElementById("noteBodyInput").value.trim();
+      if (!title && !body) return;
+
+      state.notes.unshift({
+        id: "note-" + Date.now(),
+        title: title || "Nota sin título",
+        ref,
+        body,
+        updatedAt: new Date().toLocaleDateString("es-ES")
+      });
+
+      saveState();
+      document.getElementById("noteTitleInput").value = "";
+      document.getElementById("noteRefInput").value = "";
+      document.getElementById("noteBodyInput").value = "";
+      renderNotes();
+    }
+
+    function deleteNote(id) {
+      state.notes = state.notes.filter((n) => n.id !== id);
+      saveState();
+      renderNotes();
+    }
+
+    function renderNotes() {
+      const container = document.getElementById("notesContainer");
+      container.innerHTML = "";
+      if (!state.notes.length) {
+        container.innerHTML = `<div class="card"><p class="muted">Todavía no hay notas guardadas.</p></div>`;
+        return;
+      }
+
+      state.notes.forEach((n) => {
+        const card = document.createElement("div");
+        card.className = "note-card";
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+            <div>
+              <strong>${escapeHtml(n.title)}</strong>
+              ${n.ref ? `<div class="muted">Ref: ${escapeHtml(n.ref)}</div>` : ""}
+            </div>
+            <span class="muted">${escapeHtml(n.updatedAt || "")}</span>
+          </div>
+          <p style="margin-top:8px;">${escapeHtml(n.body)}</p>
+          <button type="button" class="btn" style="padding:6px 10px; font-size:0.8rem;" onclick="deleteNote('${n.id}')">Eliminar</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "equipado-respaldo.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      document.getElementById("backupStatus").textContent = "Copia exportada correctamente.";
+    }
+
+    function importBackup(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (Array.isArray(parsed.docs) && Array.isArray(parsed.notes)) {
+            state = {
+              activeDocId: parsed.activeDocId || parsed.docs[0]?.id || "doc-welcome",
+              highlightColor: parsed.highlightColor || "hl-yellow",
+              docs: parsed.docs,
+              notes: parsed.notes
+            };
+            saveState();
+            renderLibrary();
+            renderStudy();
+            renderNotes();
+            document.getElementById("backupStatus").textContent = "Copia restaurada con éxito.";
+          } else {
+            document.getElementById("backupStatus").textContent = "El archivo no tiene el formato esperado.";
+          }
+        } catch (err) {
+          document.getElementById("backupStatus").textContent = "Error al leer el archivo JSON.";
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    document.getElementById("fileInput").addEventListener("change", async (event) => {
+      const files = Array.from(event.target.files || []);
+      for (const file of files) {
+        const name = file.name.toLowerCase();
+        const cleanTitle = file.name.replace(/\.[^/.]+$/, "");
+        let paragraphs = [];
+
+        try {
+          if (name.endsWith(".epub") && typeof JSZip !== "undefined") {
+            const zip = await JSZip.loadAsync(await file.arrayBuffer());
+            const htmlFiles = Object.keys(zip.files)
+              .filter((f) => !zip.files[f].dir && /\.(xhtml|html|htm)$/i.test(f))
+              .sort();
+            let fullText = "";
+            for (const path of htmlFiles) {
+              const rawHtml = await zip.files[path].async("string");
+              const docXml = new DOMParser().parseFromString(rawHtml, "text/html");
+              const blocks = Array.from(docXml.querySelectorAll("p, h1, h2, h3, h4, li"))
+                .map((el) => el.textContent.replace(/\s+/g, " ").trim())
+                .filter(Boolean);
+              if (blocks.length) {
+                fullText += blocks.join("\n\n") + "\n\n";
+              }
+            }
+            paragraphs = fullText.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+          } else if (name.endsWith(".pdf") && typeof pdfjsLib !== "undefined") {
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+              "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+            const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+            let pdfText = "";
+            for (let p = 1; p <= pdf.numPages; p++) {
+              const page = await pdf.getPage(p);
+              const content = await page.getTextContent();
+              const pageStr = content.items.map((item) => item.str).join(" ").replace(/\s+/g, " ").trim();
+              if (pageStr) pdfText += pageStr + "\n\n";
+            }
+            paragraphs = pdfText.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+          } else {
+            const text = await file.text();
+            paragraphs = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+          }
+        } catch (err) {
+          console.error("Error importando archivo:", err);
+          paragraphs = ["No se pudo extraer el texto completo de este archivo."];
+        }
+
+        state.docs.unshift({
+          id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+          title: cleanTitle,
+          category: name.endsWith(".epub") ? "EPUB" : name.endsWith(".pdf") ? "PDF" : "Importado",
+          paragraphs: paragraphs.length ? paragraphs : ["(Sin texto legible)"],
+          highlights: {}
+        });
+      }
+
+      saveState();
+      renderLibrary();
+      event.target.value = "";
+    });
+
+    document.getElementById("jwLangSelect").addEventListener("change", updateJwLink);
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
+    updateJwLink();
+    renderLibrary();
+    renderStudy();
+    renderNotes();
+  </script>
+</body>
+</html>
