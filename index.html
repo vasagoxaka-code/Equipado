@@ -615,6 +615,7 @@
                     <option value="de">DE</option>
                     <option value="en">EN</option>
                   </select>
+                  <button type="button" class="btn btn-sm" onclick="fetchBiblePassageOnline()">Buscar web</button>
                   <button type="button" class="btn btn-sm" onclick="jumpToBibleEdge()">Ver borde</button>
                   <button type="button" class="btn btn-sm" onclick="closeTapVerseBox()">✕</button>
                 </div>
@@ -777,7 +778,7 @@
     const STORE_STATE = "appState";
     const STORE_BIBLE = "bibleVerses";
 
-    const REF_REGEX_SOURCE = "\\b(?:1|2|3)?\\s?(?:Gén\\.?|Éx\\.?|Lev\\.?|Núm\\.?|Deut\\.?|Jos\\.?|Juec\\.?|Rut|Sam\\.?|Rey\\.?|Reyes|Crón\\.?|Esd\\.?|Neh\\.?|Est\\.?|Job|Sal\\.?|Prov\\.?|Ecl\\.?|Cant\\.?|Is\\.?|Jer\\.?|Lam\\.?|Ezeq\\.?|Dan\\.?|Os\\.?|Joel|Amós|Abd\\.?|Jon\\.?|Miq\\.?|Nah\\.?|Hab\\.?|Sof\\.?|Hag\\.?|Zac\\.?|Mal\\.?|Mat\\.?|Mar\\.?|Luc\\.?|Juan|Hech\\.?|Rom\\.?|Romanos|Cor\\.?|Gál\\.?|Ef\\.?|Filip\\.?|Col\\.?|Tes\\.?|Tim\\.?|Tito|Filem\\.?|Heb\\.?|Sant\\.?|Ped\\.?|Jud\\.?|Apoc\\.?)\\s*\\d+:\\d+(?:[-–,]\\s*\\d+)*";
+    const REF_REGEX_SOURCE = "\\b(?:1|2|3)?\\s?(?:Gén\\.?|Éx\\.?|Lev\\.?|Núm\\.?|Deut\\.?|Jos\\.?|Juec\\.?|Rut|Sam\\.?|Rey\\.?|Reyes|Crón\\.?|Esd\\.?|Neh\\.?|Est\\.?|Job|Sal\\.?|Salmo\\.?|Salmos\\.?|Prov\\.?|Ecl\\.?|Cant\\.?|Is\\.?|Jer\\.?|Lam\\.?|Ezeq\\.?|Dan\\.?|Os\\.?|Joel|Amós|Abd\\.?|Jon\\.?|Miq\\.?|Nah\\.?|Hab\\.?|Sof\\.?|Hag\\.?|Zac\\.?|Mal\\.?|Mat\\.?|Mar\\.?|Luc\\.?|Juan|Hech\\.?|Rom\\.?|Romanos|Cor\\.?|Gál\\.?|Ef\\.?|Filip\\.?|Col\\.?|Tes\\.?|Tim\\.?|Tito|Filem\\.?|Heb\\.?|Sant\\.?|Ped\\.?|Jud\\.?|Apoc\\.?)\\s*\\d+:\\d+(?:[-–,]\\s*\\d+)*";
 
     const defaultState = {
       activeDocId: "doc-welcome",
@@ -814,6 +815,30 @@
     let activeTappedRef = "";
     let readerViewMode = "index";
     let selectedArticleStartIdx = null;
+
+    function normalizeRefDigits(ref) {
+      return String(ref || "")
+        .toLowerCase()
+        .replace(/\./g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function findFlexibleBibleEntry(refKey) {
+      if (bibleCache[refKey]) return bibleCache[refKey];
+      const normTarget = normalizeRefDigits(refKey);
+      const chapVerseMatch = normTarget.match(/(\d+:\d+)/);
+      const chapVerse = chapVerseMatch ? chapVerseMatch[1] : "";
+
+      for (const [k, v] of Object.entries(bibleCache)) {
+        if (!v) continue;
+        if (normalizeRefDigits(k) === normTarget) return v;
+        if (chapVerse && k.includes(chapVerse) && normalizeRefDigits(k).slice(0, 3) === normTarget.slice(0, 3)) {
+          return v;
+        }
+      }
+      return null;
+    }
 
     function openInternalDB() {
       return new Promise((resolve, reject) => {
@@ -977,19 +1002,19 @@
     function syncTapVerseBox() {
       if (!activeTappedRef) return;
       const lang = document.getElementById("tapVerseLang").value || "es";
-      const entry = bibleCache[activeTappedRef] || { es: "", de: "", en: "" };
+      const entry = findFlexibleBibleEntry(activeTappedRef) || { es: "", de: "", en: "" };
       const textArea = document.getElementById("tapVerseText");
       const status = document.getElementById("tapVerseStatus");
       textArea.value = entry[lang] || "";
       status.textContent = entry[lang]
         ? `Mostrando texto guardado (${lang.toUpperCase()}) en memoria interna.`
-        : `Aún no hay texto en ${lang.toUpperCase()} para ${activeTappedRef}. Escríbelo o pégalo aquí.`;
+        : `Aún no hay texto en ${lang.toUpperCase()} para ${activeTappedRef}. Escríbelo, pégalo o pulsa Buscar web.`;
     }
 
     async function saveTapVerseText() {
       if (!activeTappedRef) return;
       const lang = document.getElementById("tapVerseLang").value || "es";
-      const current = bibleCache[activeTappedRef] || { es: "", de: "", en: "" };
+      const current = findFlexibleBibleEntry(activeTappedRef) || { es: "", de: "", en: "" };
       const updated = { ...current, [lang]: document.getElementById("tapVerseText").value };
       await saveBiblePassageToDB(activeTappedRef, updated);
       if (document.getElementById("bibleRefInput").value.trim() === activeTappedRef) {
@@ -1093,7 +1118,7 @@
     function renderBibleComparison() {
       const key = (document.getElementById("bibleRefInput").value || "").trim();
       const statusEl = document.getElementById("bibleFetchStatus");
-      const entry = bibleCache[key] || { es: "", de: "", en: "" };
+      const entry = findFlexibleBibleEntry(key) || { es: "", de: "", en: "" };
       document.getElementById("bibleTextEs").value = entry.es || "";
       document.getElementById("bibleTextDe").value = entry.de || "";
       document.getElementById("bibleTextEn").value = entry.en || "";
@@ -1118,9 +1143,11 @@
     async function fetchBiblePassageOnline() {
       const rawRef = (document.getElementById("bibleRefInput").value || "").trim();
       const statusEl = document.getElementById("bibleFetchStatus");
+      const tapStatus = document.getElementById("tapVerseStatus");
       if (!rawRef) return;
 
-      statusEl.textContent = "Consultando referencia...";
+      if (statusEl) statusEl.textContent = "Consultando referencia...";
+      if (tapStatus) tapStatus.textContent = "Consultando referencia...";
       const encoded = encodeURIComponent(rawRef);
 
       try {
@@ -1133,20 +1160,26 @@
         const enText = enRes?.text ? enRes.text.trim() : "";
 
         if (esText || enText) {
+          const current = findFlexibleBibleEntry(rawRef) || { es: "", de: "", en: "" };
           const updated = {
-            es: esText || document.getElementById("bibleTextEs").value,
-            de: document.getElementById("bibleTextDe").value,
-            en: enText || document.getElementById("bibleTextEn").value
+            es: esText || current.es || document.getElementById("bibleTextEs").value,
+            de: current.de || document.getElementById("bibleTextDe").value,
+            en: enText || current.en || document.getElementById("bibleTextEn").value
           };
           await saveBiblePassageToDB(rawRef, updated);
           renderBibleComparison();
           if (activeTappedRef === rawRef) syncTapVerseBox();
-          statusEl.textContent = "Guardado en memoria interna.";
+          if (statusEl) statusEl.textContent = "Guardado en memoria interna.";
+          if (tapStatus) tapStatus.textContent = "Guardado en memoria interna.";
         } else {
-          statusEl.textContent = "No encontrado automáticamente. Pégalo o escríbelo abajo y quedará guardado.";
+          const msg = "No encontrado automáticamente. Pégalo o escríbelo y quedará guardado.";
+          if (statusEl) statusEl.textContent = msg;
+          if (tapStatus) tapStatus.textContent = msg;
         }
       } catch (e) {
-        statusEl.textContent = "Sin conexión. Pégalo o escríbelo abajo y quedará guardado.";
+        const msg = "Sin conexión o sin respuesta. Pégalo o escríbelo y quedará guardado.";
+        if (statusEl) statusEl.textContent = msg;
+        if (tapStatus) tapStatus.textContent = msg;
       }
     }
 
