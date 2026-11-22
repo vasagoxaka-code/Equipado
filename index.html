@@ -20,6 +20,7 @@
       --ink: #1b2430;
       --muted: #5c6672;
       --primary: #1e3a5f;
+      --plum: #5b3a6b;
       --primary-ink: #ffffff;
       --accent: #b47b2b;
       --accent-soft: #fbf3e4;
@@ -42,7 +43,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--ink);
-      line-height: 1.68;
+      line-height: 1.65;
       padding-bottom: 88px;
     }
 
@@ -52,7 +53,7 @@
       z-index: 20;
       background: var(--primary);
       color: var(--primary-ink);
-      padding: 14px 16px;
+      padding: 13px 16px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
       display: flex;
       align-items: center;
@@ -64,7 +65,6 @@
       margin: 0;
       font-size: 1.15rem;
       font-weight: 700;
-      letter-spacing: 0.2px;
     }
 
     .brand-sub {
@@ -84,9 +84,40 @@
     }
 
     main {
-      max-width: 960px;
+      max-width: 1220px;
       margin: 0 auto;
       padding: 16px;
+    }
+
+    .study-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(290px, 0.95fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .study-split.bible-hidden {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .study-split.bible-hidden .bible-edge-panel {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      .study-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bible-edge-panel {
+      position: sticky;
+      top: 72px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 1px 4px rgba(27, 36, 48, 0.06);
     }
 
     .card {
@@ -110,25 +141,11 @@
       font-size: 0.92rem;
     }
 
-    h2 {
-      margin: 0 0 6px;
-      font-size: 1.12rem;
-    }
+    h2 { margin: 0 0 6px; font-size: 1.12rem; }
+    h3 { margin: 0 0 6px; font-size: 0.98rem; }
+    p { margin: 6px 0; font-size: 0.96rem; }
 
-    h3 {
-      margin: 0 0 6px;
-      font-size: 0.98rem;
-    }
-
-    p {
-      margin: 6px 0;
-      font-size: 0.96rem;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
+    .muted { color: var(--muted); font-size: 0.84rem; }
 
     .btn-row {
       display: flex;
@@ -140,7 +157,7 @@
 
     button, select, input[type="text"], textarea {
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
 
     .btn {
@@ -158,43 +175,21 @@
       text-decoration: none;
     }
 
-    .btn-sm {
-      padding: 6px 10px;
-      font-size: 0.8rem;
-      border-radius: 8px;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    .btn-light {
-      background: #ffffff;
-      border-color: #ffffff;
-      color: var(--primary);
-    }
-
-    .btn-outline-light {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.35);
-      color: #ffffff;
-    }
+    .btn-sm { padding: 6px 10px; font-size: 0.79rem; border-radius: 8px; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-light { background: #ffffff; border-color: #ffffff; color: var(--primary); }
+    .btn-outline-light { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.35); color: #fff; }
 
     select, input[type="text"], textarea {
       width: 100%;
-      padding: 10px 12px;
+      padding: 9px 11px;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--surface);
       color: var(--ink);
     }
 
-    textarea {
-      min-height: 95px;
-      resize: vertical;
-    }
+    textarea { min-height: 85px; resize: vertical; }
 
     .info-box {
       background: var(--accent-soft);
@@ -228,32 +223,61 @@
       margin-right: 6px;
     }
 
-    .article-divider {
-      margin: 26px 0 14px;
-      padding-top: 18px;
-      border-top: 2px solid var(--primary);
-    }
-
-    .article-badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      background: var(--primary);
+    .week-banner {
+      background: var(--plum);
       color: #fff;
-      padding: 3px 9px;
-      border-radius: 999px;
-      margin-bottom: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      margin: 18px 0 10px;
+      text-transform: uppercase;
     }
 
-    .heading-block {
-      margin: 18px 0 8px;
-      padding: 6px 10px;
-      border-left: 4px solid var(--primary);
+    .article-main-title {
+      font-size: 1.48rem;
+      line-height: 1.25;
+      font-weight: 800;
+      color: var(--ink);
+      margin: 8px 0 10px;
+    }
+
+    .lead-quote {
+      font-style: italic;
+      color: #2b3542;
+      margin: 8px 0 14px;
+      font-size: 0.98rem;
+    }
+
+    .theme-box {
+      border-left: 3px solid var(--plum);
+      padding: 4px 0 4px 12px;
+      margin: 12px 0 16px;
+      color: var(--ink);
+    }
+
+    .theme-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: var(--plum);
+      text-transform: uppercase;
+    }
+
+    .question-heading {
       font-weight: 700;
-      color: var(--primary);
-      font-size: 1.04rem;
+      color: var(--ink);
+      margin-top: 14px;
+    }
+
+    .answer-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+      background: #faf9f6;
+      margin-top: 6px;
+      font-size: 0.9rem;
     }
 
     .song-block {
@@ -263,25 +287,22 @@
       border-radius: 12px;
       padding: 12px 14px;
       margin: 12px 0;
-      font-style: italic;
     }
 
     .song-label {
       display: inline-block;
-      font-style: normal;
       font-size: 0.72rem;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: 0.4px;
       color: var(--primary);
-      background: #dbe6f3;
-      padding: 2px 8px;
-      border-radius: 999px;
-      margin-bottom: 6px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
     }
 
     .reader-paragraph {
-      padding: 9px 12px;
+      padding: 8px 10px;
       border-radius: 10px;
-      margin: 7px 0;
+      margin: 6px 0;
       border: 1px solid transparent;
       user-select: text;
       -webkit-user-select: text;
@@ -341,8 +362,8 @@
     .hl-pink { background: var(--hl-pink); border-radius: 3px; padding: 1px 2px; }
 
     .color-dot {
-      width: 26px;
-      height: 26px;
+      width: 25px;
+      height: 25px;
       border-radius: 50%;
       border: 2px solid rgba(0, 0, 0, 0.22);
       cursor: pointer;
@@ -351,6 +372,27 @@
     .color-dot.active {
       outline: 2px solid var(--primary);
       outline-offset: 2px;
+    }
+
+    .ref-chip {
+      display: inline-block;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 999px;
+      margin: 3px 4px 3px 0;
+      cursor: pointer;
+    }
+
+    .lang-compare-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 8px;
+      background: #fcfbf8;
     }
 
     .floating-toolbar {
@@ -473,7 +515,7 @@
       <div class="card hero-card">
         <span class="badge-pill">Biblioteca Personal Sin Conexión</span>
         <h2>Tu espacio de estudio listo en cualquier lugar</h2>
-        <p>Importa tus archivos EPUB o PDF, ve las imágenes y toma notas claras.</p>
+        <p>Importa tus archivos EPUB o PDF, ve las imágenes, responde preguntas y ten la Biblia a un lado.</p>
 
         <div class="btn-row">
           <label class="btn btn-light" for="fileInput">
@@ -495,7 +537,7 @@
       </div>
 
       <div class="info-box card">
-        <strong>Lectura estructurada de EPUB:</strong> Separa artículos y secciones, resalta las canciones en un recuadro distinto y te permite saltar rápido a cada artículo desde <em>Estudio</em>.
+        <strong>Vista de estudio + Borde bíblico:</strong> En <em>Estudio</em> verás las canciones destacadas, los cuadros de respuesta y un panel lateral/inferior con citas bíblicas detectadas y comparación en español, alemán e inglés.
       </div>
 
       <div class="card">
@@ -507,49 +549,96 @@
 
     <!-- PESTAÑA 2: ESTUDIO -->
     <section id="tab-study" class="hidden">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-          <div>
-            <h2 id="studyDocTitle">Selecciona un texto para estudiar</h2>
-            <p class="muted" id="studyDocMeta">Selecciona texto para subrayar o toca "Anotar".</p>
+      <div id="studyLayout" class="study-split">
+        <div>
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+              <div>
+                <h2 id="studyDocTitle">Selecciona un texto para estudiar</h2>
+                <p class="muted" id="studyDocMeta">Selecciona texto para subrayar o pulsa Anotar.</p>
+              </div>
+              <div class="btn-row" style="margin-top:0;">
+                <button type="button" class="color-dot active" data-color="hl-yellow" style="background:var(--hl-yellow);" onclick="setHighlightColor('hl-yellow')" title="Amarillo"></button>
+                <button type="button" class="color-dot" data-color="hl-green" style="background:var(--hl-green);" onclick="setHighlightColor('hl-green')" title="Verde"></button>
+                <button type="button" class="color-dot" data-color="hl-blue" style="background:var(--hl-blue);" onclick="setHighlightColor('hl-blue')" title="Azul"></button>
+                <button type="button" class="color-dot" data-color="hl-pink" style="background:var(--hl-pink);" onclick="setHighlightColor('hl-pink')" title="Rosa"></button>
+                <button type="button" class="btn btn-sm" onclick="toggleBiblePanel()">Biblia borde</button>
+                <button type="button" class="btn btn-sm" onclick="clearCurrentDocHighlights()">Limpiar marcas</button>
+              </div>
+            </div>
+
+            <div id="articleJumpBar" class="btn-row hidden" style="margin-top:12px;">
+              <label for="articleSelect" class="muted">Artículo / sección:</label>
+              <select id="articleSelect" style="max-width: 100%; flex: 1;" onchange="jumpToArticle(this.value)"></select>
+            </div>
+
+            <div id="quickNoteEditor" class="quick-note-box hidden">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <strong id="quickNoteLabel">Anotación rápida</strong>
+                <button type="button" class="btn btn-sm" onclick="closeQuickNote()">Cerrar</button>
+              </div>
+              <div id="quickNoteQuote" class="note-quote hidden"></div>
+              <textarea id="quickNoteText" placeholder="Escribe aquí tu respuesta, comentario o idea..." style="margin-top:8px;"></textarea>
+              <div class="btn-row">
+                <button type="button" class="btn btn-primary btn-sm" onclick="saveQuickParagraphNote()">Guardar</button>
+              </div>
+            </div>
+
+            <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;" />
+            <div id="readerContent"></div>
           </div>
-          <div class="btn-row" style="margin-top:0;">
-            <button type="button" class="color-dot active" data-color="hl-yellow" style="background:var(--hl-yellow);" onclick="setHighlightColor('hl-yellow')" title="Amarillo"></button>
-            <button type="button" class="color-dot" data-color="hl-green" style="background:var(--hl-green);" onclick="setHighlightColor('hl-green')" title="Verde"></button>
-            <button type="button" class="color-dot" data-color="hl-blue" style="background:var(--hl-blue);" onclick="setHighlightColor('hl-blue')" title="Azul"></button>
-            <button type="button" class="color-dot" data-color="hl-pink" style="background:var(--hl-pink);" onclick="setHighlightColor('hl-pink')" title="Rosa"></button>
-            <button type="button" class="btn btn-sm" onclick="clearCurrentDocHighlights()">Limpiar marcas</button>
+
+          <div class="card">
+            <h3>Nuevo texto rápido de estudio</h3>
+            <input type="text" id="newDocTitle" placeholder="Título del tema o publicación" style="margin-bottom:8px;" />
+            <textarea id="newDocBody" placeholder="Pega o escribe aquí el texto que quieres estudiar..."></textarea>
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" onclick="addQuickDoc()">Guardar en biblioteca</button>
+            </div>
           </div>
         </div>
 
-        <div id="articleJumpBar" class="btn-row hidden" style="margin-top:12px;">
-          <label for="articleSelect" class="muted">Artículo / sección:</label>
-          <select id="articleSelect" style="max-width: 100%; flex: 1;" onchange="jumpToArticle(this.value)"></select>
-        </div>
-
-        <div id="quickNoteEditor" class="quick-note-box hidden">
+        <!-- BORDE / PANEL BIBLICO LATERAL -->
+        <aside class="bible-edge-panel" aria-label="Biblia en los bordes">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-            <strong id="quickNoteLabel">Anotación rápida</strong>
-            <button type="button" class="btn btn-sm" onclick="closeQuickNote()">Cerrar</button>
+            <div>
+              <h3 style="margin:0;">Biblia en los bordes</h3>
+              <div class="muted">Citas del texto y comparación ES / DE / EN</div>
+            </div>
+            <button type="button" class="btn btn-sm" onclick="toggleBiblePanel()">✕</button>
           </div>
-          <div id="quickNoteQuote" class="note-quote hidden"></div>
-          <textarea id="quickNoteText" placeholder="Escribe aquí tu comentario, idea o aplicación..." style="margin-top:8px;"></textarea>
+
+          <div style="margin-top:10px;">
+            <div class="muted" style="margin-bottom:4px;">Citas detectadas en este artículo:</div>
+            <div id="detectedRefsBox"></div>
+          </div>
+
+          <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;" />
+
+          <div>
+            <label for="bibleRefInput" class="muted">Pasaje activo (ej. Romanos 10:13, 14):</label>
+            <input type="text" id="bibleRefInput" placeholder="Escribe o toca una cita..." style="margin-top:4px;" oninput="renderBibleComparison()" />
+          </div>
+
+          <div class="lang-compare-card">
+            <strong style="font-size:0.82rem; color:var(--primary);">Español (ES)</strong>
+            <textarea id="bibleTextEs" placeholder="Pega aquí el texto bíblico en español..." style="min-height:66px; margin-top:6px;" oninput="saveBiblePassage()"></textarea>
+          </div>
+
+          <div class="lang-compare-card">
+            <strong style="font-size:0.82rem; color:var(--primary);">Deutsch (DE)</strong>
+            <textarea id="bibleTextDe" placeholder="Bibeltext auf Deutsch hier einfügen..." style="min-height:66px; margin-top:6px;" oninput="saveBiblePassage()"></textarea>
+          </div>
+
+          <div class="lang-compare-card">
+            <strong style="font-size:0.82rem; color:var(--primary);">English (EN)</strong>
+            <textarea id="bibleTextEn" placeholder="Paste English Bible text here..." style="min-height:66px; margin-top:6px;" oninput="saveBiblePassage()"></textarea>
+          </div>
+
           <div class="btn-row">
-            <button type="button" class="btn btn-primary btn-sm" onclick="saveQuickParagraphNote()">Guardar nota</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="sendBiblePassageToNotes()">Enviar comparación a Notas</button>
           </div>
-        </div>
-
-        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;" />
-        <div id="readerContent"></div>
-      </div>
-
-      <div class="card">
-        <h3>Nuevo texto rápido de estudio</h3>
-        <input type="text" id="newDocTitle" placeholder="Título del tema o publicación" style="margin-bottom:8px;" />
-        <textarea id="newDocBody" placeholder="Pega o escribe aquí el texto que quieres estudiar..."></textarea>
-        <div class="btn-row">
-          <button type="button" class="btn btn-primary" onclick="addQuickDoc()">Guardar en biblioteca</button>
-        </div>
+        </aside>
       </div>
     </section>
 
@@ -557,7 +646,7 @@
     <section id="tab-notes" class="hidden">
       <div class="card">
         <h2>Notas de estudio</h2>
-        <p class="muted">Organiza tus ideas, puntos clave y referencias personales.</p>
+        <p class="muted">Organiza tus ideas, respuestas, puntos clave y referencias personales.</p>
         <input type="text" id="noteTitleInput" placeholder="Título de la nota o tema" style="margin-bottom:8px;" />
         <input type="text" id="noteRefInput" placeholder="Referencia o texto base (opcional)" style="margin-bottom:8px;" />
         <textarea id="noteBodyInput" placeholder="Escribe tu nota aquí..."></textarea>
@@ -573,7 +662,7 @@
     <section id="tab-backup" class="hidden">
       <div class="card">
         <h2>Copia de seguridad</h2>
-        <p class="muted">Exporta tus textos y notas en un archivo JSON para conservarlos o pasarlos entre dispositivos.</p>
+        <p class="muted">Exporta tus textos, pasajes bíblicos y notas en un archivo JSON.</p>
         <div class="btn-row">
           <button type="button" class="btn btn-primary" onclick="exportBackup()">Exportar copia (.json)</button>
           <label class="btn" for="importBackupInput">Importar copia (.json)</label>
@@ -619,22 +708,27 @@
   </nav>
 
   <script>
-    const STORAGE_KEY = "equipado_store_v5";
+    const STORAGE_KEY = "equipado_store_v6";
 
     const defaultState = {
       activeDocId: "doc-welcome",
       highlightColor: "hl-yellow",
+      showBiblePanel: true,
+      biblePassages: {},
       docs: [
         {
           id: "doc-welcome",
-          title: "Guía inicial de estudio personal",
-          category: "Nota base",
+          title: "Predicamos las buenas noticias en “todos los idiomas de las naciones”",
+          category: "Estudio",
           type: "text",
           paragraphs: [
-            { type: "heading", text: "Cómo aprovechar Equipado" },
-            { type: "paragraph", text: "Selecciona cualquier frase o palabra con el dedo para subrayar o añadir una nota." },
-            { type: "song", text: "Canción de ejemplo\n1. Qué alegría estudiar juntos,\ncon calma y con claridad." },
-            { type: "paragraph", text: "Importa archivos EPUB para ver los artículos separados, las canciones diferenciadas y las imágenes." }
+            { type: "week", text: "16–22 DE NOVIEMBRE DE 2026" },
+            { type: "song", text: "CANCIÓN 84\nServimos donde se nos necesite" },
+            { type: "articleTitle", text: "Predicamos las buenas noticias en “todos los idiomas de las naciones”" },
+            { type: "leadQuote", text: "“En esos días, 10 hombres de todos los idiomas de las naciones se agarrarán [...] de la túnica de un judío” (ZAC. 8:23)." },
+            { type: "themeBox", text: "Cómo está participando el pueblo de Jehová en el cumplimiento de Zacarías 8:23." },
+            { type: "question", text: "1. ¿Por qué es vital predicar las buenas noticias en muchos idiomas? (Romanos 10:13, 14)." },
+            { type: "paragraph", text: "Jehová detuvo a los rebeldes que querían construir la Torre de Babel haciendo que hablaran idiomas diferentes. Toca 'Responder' para guardar tu respuesta." }
           ],
           highlights: {}
         }
@@ -643,11 +737,11 @@
         {
           id: "note-1",
           title: "Ejemplo de punto clave",
-          ref: "Guía inicial",
+          ref: "Romanos 10:13, 14",
           quote: "",
           docId: "doc-welcome",
-          paraIndex: 1,
-          body: "Anota aquí las ideas principales, preguntas para profundizar o aplicaciones prácticas.",
+          paraIndex: 5,
+          body: "Anota aquí las ideas principales, respuestas o aplicaciones prácticas.",
           updatedAt: new Date().toLocaleDateString("es-ES")
         }
       ]
@@ -666,6 +760,8 @@
         return {
           activeDocId: parsed.activeDocId || docs[0].id,
           highlightColor: parsed.highlightColor || "hl-yellow",
+          showBiblePanel: parsed.showBiblePanel !== undefined ? Boolean(parsed.showBiblePanel) : true,
+          biblePassages: parsed.biblePassages && typeof parsed.biblePassages === "object" ? parsed.biblePassages : {},
           docs,
           notes: Array.isArray(parsed.notes) ? parsed.notes : []
         };
@@ -705,6 +801,104 @@
         en: "https://www.jw.org/en/library/"
       };
       link.href = map[lang] || map.es;
+    }
+
+    function toggleBiblePanel() {
+      state.showBiblePanel = !state.showBiblePanel;
+      saveState();
+      applyBibleLayout();
+    }
+
+    function applyBibleLayout() {
+      const layout = document.getElementById("studyLayout");
+      if (!layout) return;
+      layout.classList.toggle("bible-hidden", !state.showBiblePanel);
+    }
+
+    function extractBibleRefsFromDoc(doc) {
+      const textParts = [];
+      (doc.paragraphs || []).forEach((item) => {
+        if (typeof item === "string") textParts.push(item);
+        else if (item && item.text) textParts.push(item.text);
+      });
+      const joined = textParts.join(" ");
+      const regex = /\b(?:1|2|3)?\s?(?:Gén\.?|Éx\.?|Lev\.?|Núm\.?|Deut\.?|Jos\.?|Juec\.?|Rut|Sam\.?|Reyes|Crón\.?|Esd\.?|Neh\.?|Est\.?|Job|Sal\.?|Prov\.?|Ecl\.?|Cant\.?|Is\.?|Jer\.?|Lam\.?|Ezeq\.?|Dan\.?|Os\.?|Joel|Amós|Abd\.?|Jon\.?|Miq\.?|Nah\.?|Hab\.?|Sof\.?|Hag\.?|Zac\.?|Mal\.?|Mat\.?|Mar\.?|Luc\.?|Juan|Hech\.?|Rom\.?|Romanos|Cor\.?|Gál\.?|Ef\.?|Filip\.?|Col\.?|Tes\.?|Tim\.?|Tito|Filem\.?|Heb\.?|Sant\.?|Ped\.?|Jud\.?|Apoc\.?)\s*\d+:\d+(?:[-–,]\s*\d+)*/gi;
+      const matches = joined.match(regex) || [];
+      const unique = [];
+      matches.forEach((m) => {
+        const clean = m.replace(/\s+/g, " ").trim();
+        if (!unique.includes(clean)) unique.push(clean);
+      });
+      return unique.slice(0, 14);
+    }
+
+    function renderDetectedRefs(doc) {
+      const box = document.getElementById("detectedRefsBox");
+      const refs = extractBibleRefsFromDoc(doc);
+      if (!refs.length) {
+        box.innerHTML = `<span class="muted">No se detectaron citas automáticas. Escribe un pasaje abajo.</span>`;
+        return;
+      }
+      box.innerHTML = "";
+      refs.forEach((ref) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "ref-chip";
+        chip.textContent = ref;
+        chip.onclick = () => {
+          document.getElementById("bibleRefInput").value = ref;
+          renderBibleComparison();
+        };
+        box.appendChild(chip);
+      });
+      if (!document.getElementById("bibleRefInput").value) {
+        document.getElementById("bibleRefInput").value = refs[0];
+      }
+      renderBibleComparison();
+    }
+
+    function renderBibleComparison() {
+      const key = (document.getElementById("bibleRefInput").value || "").trim();
+      const entry = state.biblePassages[key] || { es: "", de: "", en: "" };
+      document.getElementById("bibleTextEs").value = entry.es || "";
+      document.getElementById("bibleTextDe").value = entry.de || "";
+      document.getElementById("bibleTextEn").value = entry.en || "";
+    }
+
+    function saveBiblePassage() {
+      const key = (document.getElementById("bibleRefInput").value || "").trim();
+      if (!key) return;
+      state.biblePassages[key] = {
+        es: document.getElementById("bibleTextEs").value,
+        de: document.getElementById("bibleTextDe").value,
+        en: document.getElementById("bibleTextEn").value
+      };
+      saveState();
+    }
+
+    function sendBiblePassageToNotes() {
+      const ref = (document.getElementById("bibleRefInput").value || "").trim() || "Comparación bíblica";
+      const es = document.getElementById("bibleTextEs").value.trim();
+      const de = document.getElementById("bibleTextDe").value.trim();
+      const en = document.getElementById("bibleTextEn").value.trim();
+      const parts = [];
+      if (es) parts.push(`ES: ${es}`);
+      if (de) parts.push(`DE: ${de}`);
+      if (en) parts.push(`EN: ${en}`);
+      if (!parts.length) return;
+
+      state.notes.unshift({
+        id: "note-" + Date.now(),
+        title: `Biblia · ${ref}`,
+        ref,
+        quote: "",
+        docId: state.activeDocId,
+        paraIndex: null,
+        body: parts.join("\n\n"),
+        updatedAt: new Date().toLocaleDateString("es-ES")
+      });
+      saveState();
+      renderNotes();
     }
 
     function renderLibrary() {
@@ -900,7 +1094,7 @@
       const input = document.getElementById("quickNoteText");
 
       const prefix = doc.type === "pdf" ? `Página ${blockIndex + 1}` : `Bloque ${blockIndex + 1}`;
-      label.textContent = `Nota en "${doc.title}" · ${prefix}`;
+      label.textContent = `Respuesta / Nota · ${prefix}`;
       if (quoteText) {
         quoteEl.textContent = `“${quoteText}”`;
         quoteEl.classList.remove("hidden");
@@ -985,7 +1179,7 @@
         if (item && typeof item === "object") {
           if (item.type === "articleStart") {
             jumpTargets.push({ idx, label: `Artículo: ${item.title || `Sección ${jumpTargets.length + 1}`}` });
-          } else if (item.type === "heading" && !jumpTargets.some((t) => Math.abs(t.idx - idx) < 2)) {
+          } else if (item.type === "articleTitle" && !jumpTargets.some((t) => Math.abs(t.idx - idx) < 2)) {
             jumpTargets.push({ idx, label: item.text.slice(0, 48) });
           }
         }
@@ -1013,19 +1207,22 @@
     }
 
     function renderStudy() {
+      applyBibleLayout();
       const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
       document.getElementById("studyDocTitle").textContent = doc.title;
       document.getElementById("studyDocMeta").textContent =
         doc.type === "pdf"
           ? "PDF · Toca una página para ampliarla o pulsa Anotar"
-          : `${doc.category || "Texto"} · Selecciona texto para subrayar o pulsa Anotar`;
+          : `${doc.category || "Texto"} · Selecciona texto para subrayar o pulsa Responder / Anotar`;
 
       populateArticleJump(doc);
+      renderDetectedRefs(doc);
 
-      const notesCountByBlock = {};
+      const notesByBlock = {};
       state.notes.forEach((n) => {
         if (n.docId === doc.id && typeof n.paraIndex === "number") {
-          notesCountByBlock[n.paraIndex] = (notesCountByBlock[n.paraIndex] || 0) + 1;
+          notesByBlock[n.paraIndex] = notesByBlock[n.paraIndex] || [];
+          notesByBlock[n.paraIndex].push(n.body);
         }
       });
 
@@ -1035,9 +1232,9 @@
       if (doc.type === "pdf" && Array.isArray(doc.pages)) {
         doc.pages.forEach((pg, idx) => {
           const entry = doc.highlights?.[idx];
-          const noteCount = notesCountByBlock[idx] || 0;
+          const blockNotes = notesByBlock[idx] || [];
           const card = document.createElement("div");
-          card.className = `pdf-page-card ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim();
+          card.className = `pdf-page-card ${entry?.full ? entry.full : ""} ${blockNotes.length ? "has-note" : ""}`.trim();
           card.dataset.blockIndex = idx;
 
           const headerDiv = document.createElement("div");
@@ -1061,7 +1258,7 @@
           const btnNote = document.createElement("button");
           btnNote.type = "button";
           btnNote.className = "btn btn-sm";
-          btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
+          btnNote.textContent = blockNotes.length ? `Anotar (${blockNotes.length})` : "Anotar";
           btnNote.onclick = () => openQuickNoteForBlock(idx, "");
 
           actionsDiv.appendChild(btnMark);
@@ -1088,13 +1285,19 @@
 
         if (item.type === "articleStart") {
           const div = document.createElement("div");
-          div.className = "article-divider";
+          div.className = "week-banner";
           div.dataset.blockIndex = idx;
-          div.innerHTML = `
-            <span class="article-badge">Artículo / Sección</span>
-            <h3 style="margin:4px 0 0; font-size:1.12rem; color:var(--primary);">${escapeHtml(item.title || "Sección")}</h3>
-          `;
+          div.textContent = item.title || "Sección";
           reader.appendChild(div);
+          return;
+        }
+
+        if (item.type === "week") {
+          const w = document.createElement("div");
+          w.className = "week-banner";
+          w.dataset.blockIndex = idx;
+          w.textContent = item.text || "";
+          reader.appendChild(w);
           return;
         }
 
@@ -1112,61 +1315,76 @@
 
         const pText = String(item.text || "");
         const entry = doc.highlights?.[idx];
-        const noteCount = notesCountByBlock[idx] || 0;
+        const blockNotes = notesByBlock[idx] || [];
 
         if (item.type === "song") {
           const songBox = document.createElement("div");
-          songBox.className = `song-block ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim();
+          songBox.className = `song-block ${entry?.full ? entry.full : ""}`.trim();
           songBox.dataset.blockIndex = idx;
 
-          const label = document.createElement("div");
-          label.className = "song-label";
-          label.textContent = "Canción";
+          const lines = pText.split("\n");
+          const firstLine = lines[0] || "CANCIÓN";
+          const restLines = lines.slice(1).join("\n");
 
-          const textDiv = document.createElement("div");
-          textDiv.className = "para-text";
-          textDiv.dataset.paraIndex = idx;
-          textDiv.style.whiteSpace = "pre-line";
-          textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);
-
-          const actionsDiv = document.createElement("div");
-          actionsDiv.className = "para-actions";
-
-          const btnSub = document.createElement("button");
-          btnSub.type = "button";
-          btnSub.className = "btn btn-sm";
-          btnSub.textContent = entry?.full === state.highlightColor ? "Quitar color" : "Resaltar canción";
-          btnSub.onclick = (ev) => {
-            ev.stopPropagation();
-            toggleFullBlockHighlight(idx);
-          };
-
-          const btnNote = document.createElement("button");
-          btnNote.type = "button";
-          btnNote.className = "btn btn-sm";
-          btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
-          btnNote.onclick = (ev) => {
-            ev.stopPropagation();
-            openQuickNoteForBlock(idx, "");
-          };
-
-          actionsDiv.appendChild(btnSub);
-          actionsDiv.appendChild(btnNote);
-          songBox.appendChild(label);
-          songBox.appendChild(textDiv);
-          songBox.appendChild(actionsDiv);
+          songBox.innerHTML = `
+            <div class="song-label">${escapeHtml(firstLine)}</div>
+            <div class="para-text" data-para-index="${idx}" style="font-style:italic; white-space:pre-line;">${buildHighlightedTextHtml(restLines || firstLine, entry)}</div>
+          `;
           reader.appendChild(songBox);
           return;
         }
 
+        if (item.type === "articleTitle") {
+          const t = document.createElement("div");
+          t.className = "article-main-title para-text";
+          t.dataset.blockIndex = idx;
+          t.dataset.paraIndex = idx;
+          t.innerHTML = buildHighlightedTextHtml(pText, entry);
+          reader.appendChild(t);
+          return;
+        }
+
+        if (item.type === "leadQuote") {
+          const q = document.createElement("div");
+          q.className = "lead-quote para-text";
+          q.dataset.blockIndex = idx;
+          q.dataset.paraIndex = idx;
+          q.innerHTML = buildHighlightedTextHtml(pText, entry);
+          reader.appendChild(q);
+          return;
+        }
+
+        if (item.type === "themeBox") {
+          const tb = document.createElement("div");
+          tb.className = "theme-box";
+          tb.dataset.blockIndex = idx;
+          tb.innerHTML = `
+            <div class="theme-label">TEMA</div>
+            <div class="para-text" data-para-index="${idx}" style="margin-top:4px;">${buildHighlightedTextHtml(pText, entry)}</div>
+          `;
+          reader.appendChild(tb);
+          return;
+        }
+
+        const isQuestion = item.type === "question" || /^\d{1,2}\.\s+/.test(pText);
+
         const wrapper = document.createElement("div");
-        wrapper.className = `reader-paragraph ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim();
+        wrapper.className = `reader-paragraph ${entry?.full ? entry.full : ""} ${blockNotes.length ? "has-note" : ""}`.trim();
         wrapper.dataset.blockIndex = idx;
 
         const textDiv = document.createElement("div");
-        textDiv.className = `para-text ${item.type === "heading" ? "heading-block" : ""}`;
+        textDiv.className = `para-text ${isQuestion ? "question-heading" : ""}`;
         textDiv.dataset.paraIndex = idx;
         textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);
+
+        wrapper.appendChild(textDiv);
+
+        if (blockNotes.length) {
+          const ansBox = document.createElement("div");
+          ansBox.className = "answer-box";
+          ansBox.innerHTML = blockNotes.map((b) => `<div>${escapeHtml(b)}</div>`).join("");
+          wrapper.appendChild(ansBox);
+        }
 
         const actionsDiv = document.createElement("div");
         actionsDiv.className = "para-actions";
@@ -1174,7 +1392,7 @@
         const btnSub = document.createElement("button");
         btnSub.type = "button";
         btnSub.className = "btn btn-sm";
-        btnSub.textContent = entry?.full === state.highlightColor ? "Quitar color párrafo" : "Subrayar párrafo";
+        btnSub.textContent = entry?.full === state.highlightColor ? "Quitar color" : "Subrayar";
         btnSub.onclick = (ev) => {
           ev.stopPropagation();
           toggleFullBlockHighlight(idx);
@@ -1183,7 +1401,9 @@
         const btnNote = document.createElement("button");
         btnNote.type = "button";
         btnNote.className = "btn btn-sm";
-        btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
+        btnNote.textContent = isQuestion
+          ? (blockNotes.length ? `Responder (${blockNotes.length})` : "Responder")
+          : (blockNotes.length ? `Anotar (${blockNotes.length})` : "Anotar");
         btnNote.onclick = (ev) => {
           ev.stopPropagation();
           openQuickNoteForBlock(idx, "");
@@ -1191,27 +1411,29 @@
 
         actionsDiv.appendChild(btnSub);
         actionsDiv.appendChild(btnNote);
-        wrapper.appendChild(textDiv);
         wrapper.appendChild(actionsDiv);
         reader.appendChild(wrapper);
       });
     }
 
-    function isSongBlock(text, tagName) {
+    function classifyBlock(text, tagName) {
       const clean = (text || "").trim();
-      if (!clean) return false;
-      if (/^(canción|cántico|song|lied)\s*\d*/i.test(clean) && clean.length < 90) {
-        return true;
+      if (/^(canción|cántico|song|lied)\s*\d*/i.test(clean) && clean.length < 120) {
+        return "song";
       }
-      const lines = clean.split("\n").map((l) => l.trim()).filter(Boolean);
-      if (lines.length >= 3) {
-        const avgLen = lines.reduce((acc, l) => acc + l.length, 0) / lines.length;
-        const hasVerseNumbers = lines.some((l) => /^\d+[\).\s]/.test(l));
-        if (avgLen < 58 && hasVerseNumbers && tagName !== "LI") {
-          return true;
-        }
+      if (/^(semana\s+del\s+)?\d{1,2}\s*[–-]\s*\d{1,2}\s+de\s+[a-záéíóú]+/i.test(clean) && clean.length < 80) {
+        return "week";
       }
-      return false;
+      if (/^tema\b/i.test(clean) && clean.length < 220) {
+        return "themeBox";
+      }
+      if (/^\d{1,2}\.\s+/.test(clean) && clean.length < 280) {
+        return "question";
+      }
+      if (/^h1$/i.test(tagName) && clean.length < 150) {
+        return "articleTitle";
+      }
+      return "paragraph";
     }
 
     function resolveZipPath(baseHtmlPath, imgSrc) {
@@ -1247,7 +1469,7 @@
         .split(/\n+/)
         .map((s) => s.trim())
         .filter(Boolean)
-        .map((t) => ({ type: isSongBlock(t, "P") ? "song" : "paragraph", text: t }));
+        .map((t) => ({ type: classifyBlock(t, "P"), text: t }));
 
       const newDoc = {
         id: "doc-" + Date.now(),
@@ -1319,7 +1541,7 @@
             <span class="muted">${escapeHtml(n.updatedAt || "")}</span>
           </div>
           ${n.quote ? `<div class="note-quote">${escapeHtml(n.quote)}</div>` : ""}
-          <p style="margin-top:8px;">${escapeHtml(n.body)}</p>
+          <p style="margin-top:8px; white-space:pre-line;">${escapeHtml(n.body)}</p>
           <div class="btn-row">
             ${n.docId ? `<button type="button" class="btn btn-sm" onclick="openDoc('${n.docId}', ${typeof n.paraIndex === "number" ? n.paraIndex : "null"})">Ir al punto</button>` : ""}
             <button type="button" class="btn btn-sm" onclick="deleteNote('${n.id}')">Eliminar</button>
@@ -1351,6 +1573,8 @@
             state = {
               activeDocId: parsed.activeDocId || parsed.docs[0]?.id || "doc-welcome",
               highlightColor: parsed.highlightColor || "hl-yellow",
+              showBiblePanel: parsed.showBiblePanel !== undefined ? Boolean(parsed.showBiblePanel) : true,
+              biblePassages: parsed.biblePassages || {},
               docs: parsed.docs,
               notes: parsed.notes
             };
@@ -1426,13 +1650,7 @@
                 } else {
                   const txt = node.textContent.replace(/\s+/g, " ").trim();
                   if (!txt) continue;
-                  if (/^h[1-4]$/.test(tag)) {
-                    blocks.push({ type: "heading", text: txt });
-                  } else if (isSongBlock(txt, tag.toUpperCase())) {
-                    blocks.push({ type: "song", text: txt });
-                  } else {
-                    blocks.push({ type: "paragraph", text: txt });
-                  }
+                  blocks.push({ type: classifyBlock(txt, tag.toUpperCase()), text: txt });
                 }
               }
             }
@@ -1481,7 +1699,7 @@
               .split(/\n+/)
               .map((s) => s.trim())
               .filter(Boolean)
-              .map((t) => ({ type: isSongBlock(t, "P") ? "song" : "paragraph", text: t }));
+              .map((t) => ({ type: classifyBlock(t, "P"), text: t }));
 
             state.docs.unshift({
               id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
@@ -1494,44 +1712,4 @@
           }
         } catch (err) {
           console.error("Error importando archivo:", err);
-          state.docs.unshift({
-            id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
-            title: cleanTitle,
-            category: "Error",
-            type: "text",
-            paragraphs: [{ type: "paragraph", text: "No se pudo procesar este archivo." }],
-            highlights: {}
-          });
-        }
-      }
-
-      saveState();
-      renderLibrary();
-      event.target.value = "";
-    });
-
-    document.getElementById("jwLangSelect").addEventListener("change", updateJwLink);
-    document.addEventListener("selectionchange", handleSelectionChange);
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(() => {});
-      });
-    }
-
-    setHighlightColor(state.highlightColor);
-    updateJwLink();
-    renderLibrary();
-    renderStudy();
-    renderNotes();
-  </script>
-</body>
-</html>
+          state
