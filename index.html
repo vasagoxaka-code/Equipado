@@ -23,6 +23,8 @@
       --primary-ink: #ffffff;
       --accent: #b47b2b;
       --accent-soft: #fbf3e4;
+      --song-bg: #f3f6fa;
+      --song-border: #9fb6d3;
       --border: #d8d1c5;
       --hl-yellow: #fff099;
       --hl-green: #c9f2c7;
@@ -40,7 +42,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--ink);
-      line-height: 1.65;
+      line-height: 1.68;
       padding-bottom: 88px;
     }
 
@@ -110,17 +112,17 @@
 
     h2 {
       margin: 0 0 6px;
-      font-size: 1.1rem;
+      font-size: 1.12rem;
     }
 
     h3 {
       margin: 0 0 6px;
-      font-size: 0.96rem;
+      font-size: 0.98rem;
     }
 
     p {
       margin: 6px 0;
-      font-size: 0.95rem;
+      font-size: 0.96rem;
     }
 
     .muted {
@@ -226,10 +228,60 @@
       margin-right: 6px;
     }
 
+    .article-divider {
+      margin: 26px 0 14px;
+      padding-top: 18px;
+      border-top: 2px solid var(--primary);
+    }
+
+    .article-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--primary);
+      color: #fff;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .heading-block {
+      margin: 18px 0 8px;
+      padding: 6px 10px;
+      border-left: 4px solid var(--primary);
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.04rem;
+    }
+
+    .song-block {
+      background: var(--song-bg);
+      border: 1px solid var(--song-border);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 12px 0;
+      font-style: italic;
+    }
+
+    .song-label {
+      display: inline-block;
+      font-style: normal;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: #dbe6f3;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
     .reader-paragraph {
-      padding: 10px 12px;
+      padding: 9px 12px;
       border-radius: 10px;
-      margin: 8px 0;
+      margin: 7px 0;
       border: 1px solid transparent;
       user-select: text;
       -webkit-user-select: text;
@@ -443,7 +495,7 @@
       </div>
 
       <div class="info-box card">
-        <strong>Consejo:</strong> Para subrayar frases y ver imágenes sueltas de forma limpia, el formato <strong>EPUB</strong> se lee mucho mejor que el PDF. En PDF verás cada página tal como está diseñada para consultar o anotar por página.
+        <strong>Lectura estructurada de EPUB:</strong> Separa artículos y secciones, resalta las canciones en un recuadro distinto y te permite saltar rápido a cada artículo desde <em>Estudio</em>.
       </div>
 
       <div class="card">
@@ -468,6 +520,11 @@
             <button type="button" class="color-dot" data-color="hl-pink" style="background:var(--hl-pink);" onclick="setHighlightColor('hl-pink')" title="Rosa"></button>
             <button type="button" class="btn btn-sm" onclick="clearCurrentDocHighlights()">Limpiar marcas</button>
           </div>
+        </div>
+
+        <div id="articleJumpBar" class="btn-row hidden" style="margin-top:12px;">
+          <label for="articleSelect" class="muted">Artículo / sección:</label>
+          <select id="articleSelect" style="max-width: 100%; flex: 1;" onchange="jumpToArticle(this.value)"></select>
         </div>
 
         <div id="quickNoteEditor" class="quick-note-box hidden">
@@ -562,7 +619,7 @@
   </nav>
 
   <script>
-    const STORAGE_KEY = "equipado_store_v4";
+    const STORAGE_KEY = "equipado_store_v5";
 
     const defaultState = {
       activeDocId: "doc-welcome",
@@ -574,9 +631,10 @@
           category: "Nota base",
           type: "text",
           paragraphs: [
-            "Bienvenido a Equipado. Selecciona cualquier frase o palabra con el dedo para subrayar o añadir una nota.",
-            "También puedes pulsar el botón 'Anotar' debajo de cada párrafo para escribir tus ideas sin salir de la lectura.",
-            "Importa archivos EPUB para leer párrafos con sus imágenes limpias, o PDF para consultar las páginas."
+            { type: "heading", text: "Cómo aprovechar Equipado" },
+            { type: "paragraph", text: "Selecciona cualquier frase o palabra con el dedo para subrayar o añadir una nota." },
+            { type: "song", text: "Canción de ejemplo\n1. Qué alegría estudiar juntos,\ncon calma y con claridad." },
+            { type: "paragraph", text: "Importa archivos EPUB para ver los artículos separados, las canciones diferenciadas y las imágenes." }
           ],
           highlights: {}
         }
@@ -588,7 +646,7 @@
           ref: "Guía inicial",
           quote: "",
           docId: "doc-welcome",
-          paraIndex: 0,
+          paraIndex: 1,
           body: "Anota aquí las ideas principales, preguntas para profundizar o aplicaciones prácticas.",
           updatedAt: new Date().toLocaleDateString("es-ES")
         }
@@ -655,8 +713,7 @@
       state.docs.forEach((doc) => {
         const countLabel =
           doc.type === "pdf"
-            ? `${doc.pages?.length || 0} páginas`
-            : `${doc.paragraphs?.length || 0} bloques`;
+            ? `${doc.pages?.length \vert{}\vert{} 0} páginas` : `${doc.paragraphs?.length || 0} bloques`;
         const row = document.createElement("div");
         row.className = "doc-item";
         row.innerHTML = `
@@ -841,10 +898,8 @@
       const quoteEl = document.getElementById("quickNoteQuote");
       const input = document.getElementById("quickNoteText");
 
-      const prefix = doc.type === "pdf" ? `Página ${blockIndex + 1}` : `Párrafo ${blockIndex + 1}`;
-      label.textContent = `Nota en "${doc.title}" · ${prefix}`;
-      if (quoteText) {
-        quoteEl.textContent = `“${quoteText}”`;
+      const prefix = doc.type === "pdf" ? `Página ${blockIndex + 1}` : `Bloque ${blockIndex + 1}`;
+      label.textContent = `Nota en "${doc.title}" · ${prefix}`; if (quoteText) { quoteEl.textContent = `“${quoteText}”`;
         quoteEl.classList.remove("hidden");
       } else {
         quoteEl.textContent = "";
@@ -868,12 +923,12 @@
 
       const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
       const { paraIndex, quote } = activeNoteContext;
-      const prefix = doc.type === "pdf" ? `Página ${paraIndex + 1}` : `Párrafo ${paraIndex + 1}`;
+      const prefix = doc.type === "pdf" ? `Página ${paraIndex + 1}` : `Bloque ${paraIndex + 1}`;
 
       state.notes.unshift({
         id: "note-" + Date.now(),
         title: `${doc.title} (${prefix})`,
-        ref: `${doc.title} · ${prefix}`,
+        ref: `${doc.title} ·${prefix}`,
         quote,
         docId: doc.id,
         paraIndex,
@@ -912,18 +967,33 @@
 
       if (cursor < text.length) {
         const rest = text.slice(cursor);
-        html += entry.full ? `<span class="${entry.full}">${escapeHtml(rest)}</span>` : escapeHtml(rest);
+        html += entry.full ? `<span class="${entry.full}">${escapeHtml(rest)}</span>` : escapeHtml(rest); } return html; }  function populateArticleJump(doc) { const bar = document.getElementById("articleJumpBar"); const select = document.getElementById("articleSelect"); const items = Array.isArray(doc.paragraphs) ? doc.paragraphs : []; const jumpTargets = [];  items.forEach((item, idx) => { if (item && typeof item === "object") { if (item.type === "articleStart") { jumpTargets.push({ idx, label: `Artículo: ${item.title || `Sección ${jumpTargets.length + 1}`}` });
+          } else if (item.type === "heading" && !jumpTargets.some((t) => Math.abs(t.idx - idx) < 2)) {
+            jumpTargets.push({ idx, label: item.text.slice(0, 48) });
+          }
+        }
+      });
+
+      if (!jumpTargets.length) {
+        bar.classList.add("hidden");
+        return;
       }
-      return html;
+
+      select.innerHTML = `<option value="">Ir a un artículo o sección...</option>`;
+      jumpTargets.forEach((t) => {
+        const opt = document.createElement("option");
+        opt.value = String(t.idx);
+        opt.textContent = t.label;
+        select.appendChild(opt);
+      });
+      bar.classList.remove("hidden");
     }
 
-    function renderStudy() {
-      const doc = state.docs.find((d) => d.id === state.activeDocId) || state.docs[0];
-      document.getElementById("studyDocTitle").textContent = doc.title;
-      document.getElementById("studyDocMeta").textContent =
-        doc.type === "pdf"
-          ? "PDF · Toca una página para ampliarla o pulsa Anotar"
-          : `${doc.category || "Texto"} · Selecciona texto para subrayar o pulsa Anotar`;
+    function jumpToArticle(val) {
+      if (val === "") return;
+      const el = document.querySelector(`[data-block-index="${Number(val)}"]`); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }  function renderStudy() { const doc = state.docs.find((d) => d.id === state.activeDocId) \vert{}\vert{} state.docs[0]; document.getElementById("studyDocTitle").textContent = doc.title; document.getElementById("studyDocMeta").textContent = doc.type === "pdf" ? "PDF · Toca una página para ampliarla o pulsa Anotar" : `${doc.category || "Texto"} · Selecciona texto para subrayar o pulsa Anotar`;
+
+      populateArticleJump(doc);
 
       const notesCountByBlock = {};
       state.notes.forEach((n) => {
@@ -940,16 +1010,7 @@
           const entry = doc.highlights?.[idx];
           const noteCount = notesCountByBlock[idx] || 0;
           const card = document.createElement("div");
-          card.className = `pdf-page-card ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim();
-          card.dataset.blockIndex = idx;
-
-          const headerDiv = document.createElement("div");
-          headerDiv.style.display = "flex";
-          headerDiv.style.justifyContent = "space-between";
-          headerDiv.style.alignItems = "center";
-          headerDiv.style.gap = "8px";
-          headerDiv.style.flexWrap = "wrap";
-          headerDiv.innerHTML = `<strong>Página ${pg.pageNum || idx + 1}</strong>`;
+          card.className = `pdf-page-card ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim(); card.dataset.blockIndex = idx;  const headerDiv = document.createElement("div"); headerDiv.style.display = "flex"; headerDiv.style.justifyContent = "space-between"; headerDiv.style.alignItems = "center"; headerDiv.style.gap = "8px"; headerDiv.style.flexWrap = "wrap"; headerDiv.innerHTML = `<strong>Página ${pg.pageNum || idx + 1}</strong>`;
 
           const actionsDiv = document.createElement("div");
           actionsDiv.className = "para-actions";
@@ -964,18 +1025,7 @@
           const btnNote = document.createElement("button");
           btnNote.type = "button";
           btnNote.className = "btn btn-sm";
-          btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
-          btnNote.onclick = () => openQuickNoteForBlock(idx, "");
-
-          actionsDiv.appendChild(btnMark);
-          actionsDiv.appendChild(btnNote);
-          headerDiv.appendChild(actionsDiv);
-          card.appendChild(headerDiv);
-
-          if (pg.imageDataUrl) {
-            const img = document.createElement("img");
-            img.src = pg.imageDataUrl;
-            img.alt = `Página ${pg.pageNum || idx + 1}`;
+          btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar"; btnNote.onclick = () => openQuickNoteForBlock(idx, "");  actionsDiv.appendChild(btnMark); actionsDiv.appendChild(btnNote); headerDiv.appendChild(actionsDiv); card.appendChild(headerDiv);  if (pg.imageDataUrl) { const img = document.createElement("img"); img.src = pg.imageDataUrl; img.alt = `Página ${pg.pageNum || idx + 1}`;
             img.className = "pdf-page-img";
             img.onclick = () => openLightbox(pg.imageDataUrl);
             card.appendChild(img);
@@ -986,48 +1036,60 @@
         return;
       }
 
-      (doc.paragraphs || []).forEach((item, idx) => {
-        if (item && typeof item === "object" && item.type === "image") {
+      (doc.paragraphs || []).forEach((rawItem, idx) => {
+        const item = typeof rawItem === "string" ? { type: "paragraph", text: rawItem } : (rawItem || {});
+
+        if (item.type === "articleStart") {
+          const div = document.createElement("div");
+          div.className = "article-divider";
+          div.dataset.blockIndex = idx;
+          div.innerHTML = `
+            <span class="article-badge">Artículo / Sección</span>
+            <h3 style="margin:4px 0 0; font-size:1.12rem; color:var(--primary);">${escapeHtml(item.title || "Sección")}</h3>
+          `;
+          reader.appendChild(div);
+          return;
+        }
+
+        if (item.type === "image") {
           const box = document.createElement("div");
           box.className = "reader-img-box";
           box.dataset.blockIndex = idx;
           box.innerHTML = `
-            <img src="${item.src}" alt="${escapeHtml(item.alt || "Imagen")}" onclick="openLightbox('${item.src}')" />
+            <img src="${item.src}" alt="${escapeHtml(item.alt \vert{}\vert{} "Imagen")}" onclick="openLightbox('${item.src}')" />
             <div class="muted" style="margin-top:6px;">Toca la imagen para ampliar</div>
           `;
           reader.appendChild(box);
           return;
         }
 
-        const pText = String(item || "");
+        const pText = String(item.text || "");
         const entry = doc.highlights?.[idx];
         const noteCount = notesCountByBlock[idx] || 0;
+
+        if (item.type === "song") {
+          const songBox = document.createElement("div");
+          songBox.className = `song-block ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim(); songBox.dataset.blockIndex = idx;  const label = document.createElement("div"); label.className = "song-label"; label.textContent = "Canción";  const textDiv = document.createElement("div"); textDiv.className = "para-text"; textDiv.dataset.paraIndex = idx; textDiv.style.whiteSpace = "pre-line"; textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);  const actionsDiv = document.createElement("div"); actionsDiv.className = "para-actions";  const btnSub = document.createElement("button"); btnSub.type = "button"; btnSub.className = "btn btn-sm"; btnSub.textContent = entry?.full === state.highlightColor ? "Quitar color" : "Resaltar canción"; btnSub.onclick = (ev) => { ev.stopPropagation(); toggleFullBlockHighlight(idx); };  const btnNote = document.createElement("button"); btnNote.type = "button"; btnNote.className = "btn btn-sm"; btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
+          btnNote.onclick = (ev) => {
+            ev.stopPropagation();
+            openQuickNoteForBlock(idx, "");
+          };
+
+          actionsDiv.appendChild(btnSub);
+          actionsDiv.appendChild(btnNote);
+          songBox.appendChild(label);
+          songBox.appendChild(textDiv);
+          songBox.appendChild(actionsDiv);
+          reader.appendChild(songBox);
+          return;
+        }
 
         const wrapper = document.createElement("div");
         wrapper.className = `reader-paragraph ${entry?.full ? entry.full : ""} ${noteCount ? "has-note" : ""}`.trim();
         wrapper.dataset.blockIndex = idx;
 
         const textDiv = document.createElement("div");
-        textDiv.className = "para-text";
-        textDiv.dataset.paraIndex = idx;
-        textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);
-
-        const actionsDiv = document.createElement("div");
-        actionsDiv.className = "para-actions";
-
-        const btnSub = document.createElement("button");
-        btnSub.type = "button";
-        btnSub.className = "btn btn-sm";
-        btnSub.textContent = entry?.full === state.highlightColor ? "Quitar color párrafo" : "Subrayar párrafo";
-        btnSub.onclick = (ev) => {
-          ev.stopPropagation();
-          toggleFullBlockHighlight(idx);
-        };
-
-        const btnNote = document.createElement("button");
-        btnNote.type = "button";
-        btnNote.className = "btn btn-sm";
-        btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
+        textDiv.className = `para-text ${item.type === "heading" ? "heading-block" : ""}`; textDiv.dataset.paraIndex = idx; textDiv.innerHTML = buildHighlightedTextHtml(pText, entry);  const actionsDiv = document.createElement("div"); actionsDiv.className = "para-actions";  const btnSub = document.createElement("button"); btnSub.type = "button"; btnSub.className = "btn btn-sm"; btnSub.textContent = entry?.full === state.highlightColor ? "Quitar color párrafo" : "Subrayar párrafo"; btnSub.onclick = (ev) => { ev.stopPropagation(); toggleFullBlockHighlight(idx); };  const btnNote = document.createElement("button"); btnNote.type = "button"; btnNote.className = "btn btn-sm"; btnNote.textContent = noteCount ? `Anotar (${noteCount})` : "Anotar";
         btnNote.onclick = (ev) => {
           ev.stopPropagation();
           openQuickNoteForBlock(idx, "");
@@ -1039,6 +1101,23 @@
         wrapper.appendChild(actionsDiv);
         reader.appendChild(wrapper);
       });
+    }
+
+    function isSongBlock(text, tagName) {
+      const clean = (text || "").trim();
+      if (!clean) return false;
+      if (/^(canción|cántico|song|lied)\s*\d*/i.test(clean) && clean.length < 90) {
+        return true;
+      }
+      const lines = clean.split("\n").map((l) => l.trim()).filter(Boolean);
+      if (lines.length >= 3) {
+        const avgLen = lines.reduce((acc, l) => acc + l.length, 0) / lines.length;
+        const hasVerseNumbers = lines.some((l) => /^\d+[\).\s]/.test(l));
+        if (avgLen < 58 && hasVerseNumbers && tagName !== "LI") {
+          return true;
+        }
+      }
+      return false;
     }
 
     function resolveZipPath(baseHtmlPath, imgSrc) {
@@ -1073,14 +1152,15 @@
       const paragraphs = body
         .split(/\n+/)
         .map((s) => s.trim())
-        .filter(Boolean);
+        .filter(Boolean)
+        .map((t) => ({ type: isSongBlock(t, "P") ? "song" : "paragraph", text: t }));
 
       const newDoc = {
         id: "doc-" + Date.now(),
         title,
         category: "Estudio",
         type: "text",
-        paragraphs: paragraphs.length ? paragraphs : [body],
+        paragraphs: paragraphs.length ? paragraphs : [{ type: "paragraph", text: body }],
         highlights: {}
       };
 
@@ -1139,205 +1219,9 @@
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
             <div>
-              <strong>${escapeHtml(n.title)}</strong>
-              ${n.ref ? `<div class="muted">Ref: ${escapeHtml(n.ref)}</div>` : ""}
+              <strong>${escapeHtml(n.title)}</strong>${n.ref ? `<div class="muted">Ref: ${escapeHtml(n.ref)}</div>` : ""}
             </div>
             <span class="muted">${escapeHtml(n.updatedAt || "")}</span>
           </div>
           ${n.quote ? `<div class="note-quote">${escapeHtml(n.quote)}</div>` : ""}
-          <p style="margin-top:8px;">${escapeHtml(n.body)}</p>
-          <div class="btn-row">
-            ${n.docId ? `<button type="button" class="btn btn-sm" onclick="openDoc('${n.docId}', ${typeof n.paraIndex === "number" ? n.paraIndex : "null"})">Ir al punto</button>` : ""}
-            <button type="button" class="btn btn-sm" onclick="deleteNote('${n.id}')">Eliminar</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function exportBackup() {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "equipado-respaldo.json";
-      a.click();
-      URL.revokeObjectURL(url);
-      document.getElementById("backupStatus").textContent = "Copia exportada correctamente.";
-    }
-
-    function importBackup(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(reader.result);
-          if (Array.isArray(parsed.docs) && Array.isArray(parsed.notes)) {
-            state = {
-              activeDocId: parsed.activeDocId || parsed.docs[0]?.id || "doc-welcome",
-              highlightColor: parsed.highlightColor || "hl-yellow",
-              docs: parsed.docs,
-              notes: parsed.notes
-            };
-            saveState();
-            renderLibrary();
-            renderStudy();
-            renderNotes();
-            document.getElementById("backupStatus").textContent = "Copia restaurada con éxito.";
-          } else {
-            document.getElementById("backupStatus").textContent = "El archivo no tiene el formato esperado.";
-          }
-        } catch (err) {
-          document.getElementById("backupStatus").textContent = "Error al leer el archivo JSON.";
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    document.getElementById("fileInput").addEventListener("change", async (event) => {
-      const files = Array.from(event.target.files || []);
-      for (const file of files) {
-        const name = file.name.toLowerCase();
-        const cleanTitle = file.name.replace(/\.[^/.]+$/, "");
-
-        try {
-          if (name.endsWith(".epub") && typeof JSZip !== "undefined") {
-            const zip = await JSZip.loadAsync(await file.arrayBuffer());
-            const allZipKeys = Object.keys(zip.files);
-            const imageCache = {};
-
-            for (const key of allZipKeys) {
-              if (!zip.files[key].dir && /\.(jpe?g|png|gif|webp|svg)$/i.test(key)) {
-                const blob = await zip.files[key].async("blob");
-                imageCache[key.toLowerCase()] = await blobToDataUrl(blob);
-              }
-            }
-
-            const htmlFiles = allZipKeys
-              .filter((f) => !zip.files[f].dir && /\.(xhtml|html|htm)$/i.test(f))
-              .sort();
-
-            const blocks = [];
-            for (const path of htmlFiles) {
-              const rawHtml = await zip.files[path].async("string");
-              const docXml = new DOMParser().parseFromString(rawHtml, "text/html");
-              const nodes = Array.from(docXml.querySelectorAll("p, h1, h2, h3, h4, li, img"));
-
-              for (const node of nodes) {
-                if (node.tagName.toLowerCase() === "img") {
-                  const srcAttr = node.getAttribute("src") || "";
-                  const resolved = resolveZipPath(path, srcAttr).toLowerCase();
-                  let dataUrl = imageCache[resolved];
-                  if (!dataUrl) {
-                    const baseName = resolved.split("/").pop();
-                    const foundKey = Object.keys(imageCache).find((k) => k.endsWith("/" + baseName) || k === baseName);
-                    if (foundKey) dataUrl = imageCache[foundKey];
-                  }
-                  if (dataUrl) {
-                    blocks.push({
-                      type: "image",
-                      src: dataUrl,
-                      alt: node.getAttribute("alt") || cleanTitle
-                    });
-                  }
-                } else {
-                  const txt = node.textContent.replace(/\s+/g, " ").trim();
-                  if (txt) blocks.push(txt);
-                }
-              }
-            }
-
-            state.docs.unshift({
-              id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
-              title: cleanTitle,
-              category: "EPUB",
-              type: "epub",
-              paragraphs: blocks.length ? blocks : ["(Sin contenido legible)"],
-              highlights: {}
-            });
-          } else if (name.endsWith(".pdf") && typeof pdfjsLib !== "undefined") {
-            pdfjsLib.GlobalWorkerOptions.workerSrc =
-              "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-            const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-            const pages = [];
-            const maxPages = Math.min(pdf.numPages, 35);
-
-            for (let p = 1; p <= maxPages; p++) {
-              const page = await pdf.getPage(p);
-              const viewport = page.getViewport({ scale: 1.2 });
-              const canvas = document.createElement("canvas");
-              const ctx = canvas.getContext("2d");
-              canvas.width = viewport.width;
-              canvas.height = viewport.height;
-              await page.render({ canvasContext: ctx, viewport }).promise;
-
-              pages.push({
-                pageNum: p,
-                imageDataUrl: canvas.toDataURL("image/jpeg", 0.72)
-              });
-            }
-
-            state.docs.unshift({
-              id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
-              title: pdf.numPages > maxPages ? `${cleanTitle} (primeras ${maxPages} págs.)` : cleanTitle,
-              category: "PDF",
-              type: "pdf",
-              pages,
-              highlights: {}
-            });
-          } else {
-            const text = await file.text();
-            const paragraphs = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
-            state.docs.unshift({
-              id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
-              title: cleanTitle,
-              category: "Importado",
-              type: "text",
-              paragraphs: paragraphs.length ? paragraphs : ["(Archivo vacío)"],
-              highlights: {}
-            });
-          }
-        } catch (err) {
-          console.error("Error importando archivo:", err);
-          state.docs.unshift({
-            id: "doc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
-            title: cleanTitle,
-            category: "Error",
-            type: "text",
-            paragraphs: ["No se pudo procesar este archivo."],
-            highlights: {}
-          });
-        }
-      }
-
-      saveState();
-      renderLibrary();
-      event.target.value = "";
-    });
-
-    document.getElementById("jwLangSelect").addEventListener("change", updateJwLink);
-    document.addEventListener("selectionchange", handleSelectionChange);
-
-    function escapeHtml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(() => {});
-      });
-    }
-
-    setHighlightColor(state.highlightColor);
-    updateJwLink();
-    renderLibrary();
-    renderStudy();
-    renderNotes();
-  </script>
-</body>
-</html>
+          <p style="margin-top:8px;">
